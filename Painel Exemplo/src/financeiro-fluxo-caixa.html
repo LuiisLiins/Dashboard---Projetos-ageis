@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fluxo de Caixa | Dashboard Multidominio</title>
+  </head>
+  <body
+    x-data="createAppShell('financeiro-fluxo-caixa')"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <include src="./partials/preloader.html"></include>
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <include src="./partials/dashboard/page-header.html"></include>
+            <section class="grid gap-4 md:grid-cols-3">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span class="text-sm text-gray-500 dark:text-gray-400"
+                  >Entradas previstas</span
+                >
+                <h3
+                  class="mt-3 text-3xl font-semibold text-gray-800 dark:text-white/90"
+                >
+                  R$ 2,4 mi
+                </h3>
+                <p class="text-success-700 dark:text-success-300 mt-2 text-sm">
+                  72% ja confirmadas
+                </p>
+              </div>
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span class="text-sm text-gray-500 dark:text-gray-400"
+                  >Saidas planejadas</span
+                >
+                <h3
+                  class="mt-3 text-3xl font-semibold text-gray-800 dark:text-white/90"
+                >
+                  R$ 2,1 mi
+                </h3>
+                <p class="text-warning-700 dark:text-warning-300 mt-2 text-sm">
+                  Foco em fornecedores A
+                </p>
+              </div>
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span class="text-sm text-gray-500 dark:text-gray-400"
+                  >Saldo projetado D+14</span
+                >
+                <h3
+                  class="mt-3 text-3xl font-semibold text-gray-800 dark:text-white/90"
+                >
+                  R$ 1,1 mi
+                </h3>
+                <p class="text-warning-700 dark:text-warning-300 mt-2 text-sm">
+                  Acima do piso com pouca folga
+                </p>
+              </div>
+            </section>
+            <section class="mt-6 grid gap-4 xl:grid-cols-2">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <h3
+                  class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Entradas previstas
+                </h3>
+                <div
+                  class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300"
+                >
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Grupo Atlas</span
+                    ><span class="font-semibold">R$ 620 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Holding Sigma</span
+                    ><span class="font-semibold">R$ 410 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Nova Biotec</span
+                    ><span class="font-semibold">R$ 285 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Carteira pulverizada</span
+                    ><span class="font-semibold">R$ 1,09 mi</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <h3
+                  class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Saidas criticas
+                </h3>
+                <div
+                  class="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300"
+                >
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Fornecedores metalicos</span
+                    ><span class="font-semibold">R$ 540 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Fretes especiais</span
+                    ><span class="font-semibold">R$ 220 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Folha e encargos</span
+                    ><span class="font-semibold">R$ 760 mil</span>
+                  </div>
+                  <div
+                    class="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 dark:bg-gray-900"
+                  >
+                    <span>Tributos</span
+                    ><span class="font-semibold">R$ 580 mil</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section
+              class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <h3
+                class="text-lg font-semibold text-gray-800 dark:text-white/90"
+              >
+                Janela dos proximos 14 dias
+              </h3>
+              <div
+                class="mt-5 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800"
+              >
+                <div
+                  class="grid grid-cols-[1fr_1fr_1fr_1fr] bg-gray-50 px-4 py-3 text-xs font-semibold tracking-[0.16em] text-gray-500 uppercase dark:bg-gray-900 dark:text-gray-400"
+                >
+                  <span>Data</span><span>Entradas</span><span>Saidas</span
+                  ><span>Saldo</span>
+                </div>
+                <div class="divide-y divide-gray-200 dark:divide-gray-800">
+                  <div
+                    class="grid grid-cols-[1fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>08 Abr</span><span>R$ 180 mil</span
+                    ><span>R$ 95 mil</span
+                    ><span
+                      class="text-success-700 dark:text-success-300 font-semibold"
+                      >R$ 85 mil</span
+                    >
+                  </div>
+                  <div
+                    class="grid grid-cols-[1fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>09 Abr</span><span>R$ 410 mil</span
+                    ><span>R$ 520 mil</span
+                    ><span
+                      class="text-warning-700 dark:text-warning-300 font-semibold"
+                      >-R$ 110 mil</span
+                    >
+                  </div>
+                  <div
+                    class="grid grid-cols-[1fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>10 Abr</span><span>R$ 95 mil</span
+                    ><span>R$ 130 mil</span
+                    ><span
+                      class="text-warning-700 dark:text-warning-300 font-semibold"
+                      >-R$ 35 mil</span
+                    >
+                  </div>
+                  <div
+                    class="grid grid-cols-[1fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>11 Abr</span><span>R$ 620 mil</span
+                    ><span>R$ 210 mil</span
+                    ><span
+                      class="text-success-700 dark:text-success-300 font-semibold"
+                      >R$ 410 mil</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

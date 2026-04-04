@@ -7,16 +7,106 @@ import Alpine from "alpinejs";
 import persist from "@alpinejs/persist";
 import flatpickr from "flatpickr";
 import Dropzone from "dropzone";
+import {
+  dashboardLevels,
+  getIconMarkup,
+  navigationGroups,
+  pageCatalog,
+} from "./config/navigation";
 
 import chart01 from "./components/charts/chart-01";
 import chart02 from "./components/charts/chart-02";
 import chart03 from "./components/charts/chart-03";
+import initDomainCharts from "./components/domain-charts";
 import map01 from "./components/map-01";
 import "./components/calendar-init.js";
 import "./components/image-resize";
 
+const createNavigationStore = () => ({
+  groups: navigationGroups,
+  levels: dashboardLevels,
+  pages: pageCatalog,
+  getPageMeta(pageKey) {
+    return (
+      this.pages[pageKey] || {
+        href: "index.html",
+        title: "Dashboard",
+        navLabel: "Dashboard",
+        domainLabel: "Central",
+        description: "Pagina sem configuracao cadastrada.",
+        focus: "Visao geral",
+        levelKey: "tatico",
+        levelLabel: "Tatico",
+        levelDescription: "Leitura gerencial sem configuracao cadastrada.",
+        audience: "Gestao",
+        cadence: "Sob demanda",
+        badgeClass:
+          "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
+      }
+    );
+  },
+  getLevelMeta(levelKey) {
+    return (
+      this.levels.find((level) => level.key === levelKey) || {
+        key: "tatico",
+        label: "Tatico",
+        description: "Leitura intermediaria para acompanhamento gerencial.",
+        audience: "Gestao",
+        cadence: "Sob demanda",
+        anchor: "#",
+        badgeClass:
+          "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
+        borderClass: "border-gray-200 dark:border-gray-800",
+      }
+    );
+  },
+  getGroupKey(pageKey) {
+    return this.getPageMeta(pageKey).groupKey || "";
+  },
+  getPagesByLevel(levelKey) {
+    return Object.entries(this.pages)
+      .filter(
+        ([pageKey, meta]) =>
+          pageKey !== "overview" && meta.levelKey === levelKey,
+      )
+      .map(([pageKey, meta]) => ({
+        key: pageKey,
+        href: meta.href,
+        title: meta.title,
+        navLabel: meta.navLabel,
+        description: meta.description,
+        groupLabel: meta.groupLabel || meta.domainLabel,
+        badgeClass: meta.badgeClass,
+      }));
+  },
+  isGroupActive(groupKey, pageKey) {
+    return this.getGroupKey(pageKey) === groupKey;
+  },
+  getIcon(iconKey, className = "") {
+    return getIconMarkup(iconKey, className);
+  },
+});
+
+window.createAppShell = (pageKey) => ({
+  page: pageKey,
+  loaded: true,
+  darkMode: false,
+  stickyMenu: false,
+  sidebarToggle: false,
+  scrollTop: false,
+  init() {
+    const persistedDarkMode = localStorage.getItem("darkMode");
+
+    this.darkMode = persistedDarkMode ? JSON.parse(persistedDarkMode) : false;
+    this.$watch("darkMode", (value) => {
+      localStorage.setItem("darkMode", JSON.stringify(value));
+    });
+  },
+});
+
 Alpine.plugin(persist);
 window.Alpine = Alpine;
+Alpine.store("navigation", createNavigationStore());
 Alpine.start();
 
 // Init flatpickr
@@ -54,6 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
   chart01();
   chart02();
   chart03();
+  initDomainCharts();
   map01();
 });
 
@@ -67,19 +158,14 @@ if (year) {
 document.addEventListener("DOMContentLoaded", () => {
   const copyInput = document.getElementById("copy-input");
   if (copyInput) {
-    // Select the copy button and input field
     const copyButton = document.getElementById("copy-button");
     const copyText = document.getElementById("copy-text");
     const websiteInput = document.getElementById("website-input");
 
-    // Event listener for the copy button
     copyButton.addEventListener("click", () => {
-      // Copy the input value to the clipboard
       navigator.clipboard.writeText(websiteInput.value).then(() => {
-        // Change the text to "Copied"
         copyText.textContent = "Copied";
 
-        // Reset the text back to "Copy" after 2 seconds
         setTimeout(() => {
           copyText.textContent = "Copy";
         }, 2000);
@@ -92,26 +178,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.getElementById("search-input");
   const searchButton = document.getElementById("search-button");
 
-  // Function to focus the search input
+  if (!searchInput || !searchButton) {
+    return;
+  }
+
   function focusSearchInput() {
     searchInput.focus();
   }
 
-  // Add click event listener to the search button
   searchButton.addEventListener("click", focusSearchInput);
 
-  // Add keyboard event listener for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
   document.addEventListener("keydown", function (event) {
     if ((event.metaKey || event.ctrlKey) && event.key === "k") {
-      event.preventDefault(); // Prevent the default browser behavior
+      event.preventDefault();
       focusSearchInput();
     }
   });
 
-  // Add keyboard event listener for "/" key
   document.addEventListener("keydown", function (event) {
     if (event.key === "/" && document.activeElement !== searchInput) {
-      event.preventDefault(); // Prevent the "/" character from being typed
+      event.preventDefault();
       focusSearchInput();
     }
   });

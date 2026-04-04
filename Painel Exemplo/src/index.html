@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -7,82 +7,535 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>
-      eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template
-    </title>
+    <title>Panorama Corporativo | Dashboard Multidominio</title>
   </head>
   <body
-    x-data="{ page: 'ecommerce', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
-    x-init="
-         darkMode = JSON.parse(localStorage.getItem('darkMode'));
-         $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    x-data="createAppShell('overview')"
     :class="{'dark bg-gray-900': darkMode === true}"
   >
-    <!-- ===== Preloader Start ===== -->
     <include src="./partials/preloader.html"></include>
-    <!-- ===== Preloader End ===== -->
 
-    <!-- ===== Page Wrapper Start ===== -->
     <div class="flex h-screen overflow-hidden">
-      <!-- ===== Sidebar Start ===== -->
       <include src="./partials/sidebar.html"></include>
-      <!-- ===== Sidebar End ===== -->
 
-      <!-- ===== Content Area Start ===== -->
       <div
-        class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto"
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
       >
-        <!-- Small Device Overlay Start -->
         <include src="./partials/overlay.html" />
-        <!-- Small Device Overlay End -->
-
-        <!-- ===== Header Start ===== -->
         <include src="./partials/header.html" />
-        <!-- ===== Header End ===== -->
 
-        <!-- ===== Main Content Start ===== -->
         <main>
-          <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-            <div class="grid grid-cols-12 gap-4 md:gap-6">
-              <div class="col-span-12 space-y-6 xl:col-span-7">
-                <!-- Metric Group One -->
-                <include src="./partials/metric-group/metric-group-01.html" />
-                <!-- Metric Group One -->
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <include src="./partials/dashboard/page-header.html"></include>
 
-                <!-- ====== Chart One Start -->
-                <include src="./partials/chart/chart-01.html" />
-                <!-- ====== Chart One End -->
-              </div>
-              <div class="col-span-12 xl:col-span-5">
-                <!-- ====== Chart Two Start -->
-                <include src="./partials/chart/chart-02.html" />
-                <!-- ====== Chart Two End -->
+            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <a
+                href="financeiro-dashboard.html"
+                class="hover:border-success-200 hover:shadow-theme-sm rounded-2xl border border-gray-200 bg-white p-5 transition hover:-translate-y-0.5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span
+                  class="bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-300 inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+                  >Financeiro</span
+                >
+                <h3
+                  class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Liquidez e margem
+                </h3>
+                <p
+                  class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                >
+                  Receita, caixa, margem e inadimplencia em leitura unica para a
+                  diretoria.
+                </p>
+                <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">Receita</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      R$ 14,8 mi
+                    </p>
+                  </div>
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">Margem</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      22,4%
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              <a
+                href="comercial-dashboard.html"
+                class="hover:border-brand-200 hover:shadow-theme-sm rounded-2xl border border-gray-200 bg-white p-5 transition hover:-translate-y-0.5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span
+                  class="bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300 inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+                  >Comercial</span
+                >
+                <h3
+                  class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Pipeline e receita
+                </h3>
+                <p
+                  class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                >
+                  Conversao, ticket medio e ritmo de fechamento por canal e
+                  vendedor.
+                </p>
+                <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">Pipeline</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      R$ 9,2 mi
+                    </p>
+                  </div>
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">Conversao</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      31,8%
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              <a
+                href="operacoes-dashboard.html"
+                class="hover:border-warning-200 hover:shadow-theme-sm rounded-2xl border border-gray-200 bg-white p-5 transition hover:-translate-y-0.5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span
+                  class="bg-warning-50 text-warning-700 dark:bg-warning-500/15 dark:text-warning-300 inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+                  >Operacoes</span
+                >
+                <h3
+                  class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Produtividade e OEE
+                </h3>
+                <p
+                  class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                >
+                  Acompanhe capacidade, qualidade, turnos e gargalos nas linhas
+                  criticas.
+                </p>
+                <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">OEE</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      83%
+                    </p>
+                  </div>
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">OTD interno</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      94,6%
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              <a
+                href="logistica-dashboard.html"
+                class="hover:shadow-theme-sm rounded-2xl border border-gray-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-orange-200 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <span
+                  class="inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase dark:bg-orange-500/15 dark:text-orange-300"
+                  >Logistica</span
+                >
+                <h3
+                  class="mt-4 text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Estoque e entregas
+                </h3>
+                <p
+                  class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                >
+                  Cobertura, SLA, ruptura e expedicao com foco nos pedidos
+                  prioritarios.
+                </p>
+                <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">SLA</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      96,1%
+                    </p>
+                  </div>
+                  <div class="rounded-xl bg-gray-50 px-3 py-2 dark:bg-gray-900">
+                    <span class="text-gray-400">Cobertura</span>
+                    <p
+                      class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      36 dias
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </section>
+
+            <section
+              class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <div
+                class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
+              >
+                <div>
+                  <h3
+                    class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                  >
+                    Niveis de analise
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Escolha primeiro o tipo de leitura que voce precisa e depois
+                    aprofunde por area.
+                  </p>
+                </div>
+                <span class="text-sm text-gray-400"
+                  >Estrategico, tatico e operacional</span
+                >
               </div>
 
-              <div class="col-span-12">
-                <!-- ====== Chart Three Start -->
-                <include src="./partials/chart/chart-03.html" />
-                <!-- ====== Chart Three End -->
+              <div class="mt-5 grid gap-4 xl:grid-cols-3">
+                <template
+                  x-for="level in $store.navigation.levels"
+                  :key="level.key"
+                >
+                  <article
+                    class="rounded-2xl border bg-gray-50 p-5 dark:bg-gray-900"
+                    :class="level.borderClass"
+                    :id="`nivel-${level.key}`"
+                  >
+                    <div class="flex items-center justify-between gap-3">
+                      <span
+                        class="inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+                        :class="level.badgeClass"
+                        x-text="level.label"
+                      ></span>
+                      <span
+                        class="text-xs text-gray-400"
+                        x-text="level.cadence"
+                      ></span>
+                    </div>
+                    <p
+                      class="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300"
+                      x-text="level.description"
+                    ></p>
+                    <div class="mt-4 space-y-2 text-sm">
+                      <div
+                        class="rounded-xl bg-white px-3 py-2 dark:bg-black/20"
+                      >
+                        <span class="text-gray-400">Publico</span>
+                        <p
+                          class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                          x-text="level.audience"
+                        ></p>
+                      </div>
+                      <div
+                        class="rounded-xl bg-white px-3 py-2 dark:bg-black/20"
+                      >
+                        <span class="text-gray-400">Quando usar</span>
+                        <p
+                          class="mt-1 font-semibold text-gray-800 dark:text-white/90"
+                          x-text="level.cadence"
+                        ></p>
+                      </div>
+                    </div>
+
+                    <div class="mt-4 space-y-3">
+                      <template
+                        x-for="item in $store.navigation.getPagesByLevel(level.key)"
+                        :key="item.key"
+                      >
+                        <a
+                          :href="item.href"
+                          class="hover:shadow-theme-xs block rounded-xl border border-gray-200 bg-white px-4 py-3 transition hover:-translate-y-0.5 dark:border-gray-800 dark:bg-white/[0.03]"
+                        >
+                          <div class="flex items-center justify-between gap-3">
+                            <span
+                              class="font-semibold text-gray-800 dark:text-white/90"
+                              x-text="item.title"
+                            ></span>
+                            <span
+                              class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                              :class="item.badgeClass"
+                              x-text="item.groupLabel"
+                            ></span>
+                          </div>
+                          <p
+                            class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                            x-text="item.description"
+                          ></p>
+                        </a>
+                      </template>
+                    </div>
+                  </article>
+                </template>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-4 xl:grid-cols-3">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 xl:col-span-2 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      Prioridades da semana
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      Leituras que pedem decisao imediata entre as areas.
+                    </p>
+                  </div>
+                  <span
+                    class="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold tracking-[0.16em] text-gray-600 uppercase dark:bg-white/10 dark:text-white/70"
+                    >4 frentes</span
+                  >
+                </div>
+
+                <div class="mt-5 grid gap-4 md:grid-cols-2">
+                  <div class="rounded-2xl bg-gray-50 p-4 dark:bg-gray-900">
+                    <div class="flex items-center justify-between">
+                      <h4
+                        class="font-semibold text-gray-800 dark:text-white/90"
+                      >
+                        Caixa em 14 dias
+                      </h4>
+                      <span
+                        class="bg-warning-100 text-warning-700 dark:bg-warning-500/15 dark:text-warning-300 rounded-full px-2.5 py-1 text-xs font-semibold"
+                        >Atencao</span
+                      >
+                    </div>
+                    <p
+                      class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                    >
+                      Saidas acima do planejado em fornecedores estrategicos
+                      exigem renegociacao de prazo.
+                    </p>
+                  </div>
+                  <div class="rounded-2xl bg-gray-50 p-4 dark:bg-gray-900">
+                    <div class="flex items-center justify-between">
+                      <h4
+                        class="font-semibold text-gray-800 dark:text-white/90"
+                      >
+                        Pipeline parado
+                      </h4>
+                      <span
+                        class="bg-brand-100 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300 rounded-full px-2.5 py-1 text-xs font-semibold"
+                        >Comercial</span
+                      >
+                    </div>
+                    <p
+                      class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                    >
+                      12 oportunidades acima de R$ 150 mil estao ha mais de 9
+                      dias sem proximo passo definido.
+                    </p>
+                  </div>
+                  <div class="rounded-2xl bg-gray-50 p-4 dark:bg-gray-900">
+                    <div class="flex items-center justify-between">
+                      <h4
+                        class="font-semibold text-gray-800 dark:text-white/90"
+                      >
+                        Gargalo de linha
+                      </h4>
+                      <span
+                        class="bg-warning-100 text-warning-700 dark:bg-warning-500/15 dark:text-warning-300 rounded-full px-2.5 py-1 text-xs font-semibold"
+                        >Operacoes</span
+                      >
+                    </div>
+                    <p
+                      class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                    >
+                      A linha 03 segue abaixo de 70% de utilizacao por setup
+                      alto no segundo turno.
+                    </p>
+                  </div>
+                  <div class="rounded-2xl bg-gray-50 p-4 dark:bg-gray-900">
+                    <div class="flex items-center justify-between">
+                      <h4
+                        class="font-semibold text-gray-800 dark:text-white/90"
+                      >
+                        Estoque critico
+                      </h4>
+                      <span
+                        class="rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:bg-orange-500/15 dark:text-orange-300"
+                        >Logistica</span
+                      >
+                    </div>
+                    <p
+                      class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400"
+                    >
+                      7 SKUs classe A entram em ruptura em menos de 5 dias se o
+                      lead time nao for reduzido.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div class="col-span-12 xl:col-span-5">
-                <!-- ====== Map One Start -->
-                <include src="./partials/map-01.html" />
-                <!-- ====== Map One End -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <h3
+                  class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                >
+                  Radar consolidado
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Leitura resumida da maturidade de cada area.
+                </p>
+
+                <div class="mt-5 space-y-4">
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-medium text-gray-700 dark:text-gray-300"
+                        >Financeiro</span
+                      ><span class="text-success-700 dark:text-success-300"
+                        >82/100</span
+                      >
+                    </div>
+                    <div class="h-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                      <div
+                        class="bg-success-500 h-2 w-[82%] rounded-full"
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-medium text-gray-700 dark:text-gray-300"
+                        >Comercial</span
+                      ><span class="text-brand-700 dark:text-brand-300"
+                        >76/100</span
+                      >
+                    </div>
+                    <div class="h-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                      <div class="bg-brand-500 h-2 w-[76%] rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-medium text-gray-700 dark:text-gray-300"
+                        >Operacoes</span
+                      ><span class="text-warning-700 dark:text-warning-300"
+                        >71/100</span
+                      >
+                    </div>
+                    <div class="h-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                      <div
+                        class="bg-warning-500 h-2 w-[71%] rounded-full"
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="font-medium text-gray-700 dark:text-gray-300"
+                        >Logistica</span
+                      ><span class="text-orange-700 dark:text-orange-300"
+                        >79/100</span
+                      >
+                    </div>
+                    <div class="h-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                      <div class="h-2 w-[79%] rounded-full bg-orange-500"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section
+              class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <div
+                class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
+              >
+                <div>
+                  <h3
+                    class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                  >
+                    Acompanhamento imediato
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Lista enxuta dos itens que merecem passagem de bastao entre
+                    liderancas.
+                  </p>
+                </div>
+                <span class="text-sm text-gray-400"
+                  >Atualizado hoje, 08:30</span
+                >
               </div>
 
-              <div class="col-span-12 xl:col-span-7">
-                <!-- ====== Table One Start -->
-                <include src="./partials/table/table-01.html" />
-                <!-- ====== Table One End -->
+              <div
+                class="mt-5 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800"
+              >
+                <div
+                  class="grid grid-cols-[1.2fr_1fr_1fr_1fr] bg-gray-50 px-4 py-3 text-xs font-semibold tracking-[0.16em] text-gray-500 uppercase dark:bg-gray-900 dark:text-gray-400"
+                >
+                  <span>Frente</span>
+                  <span>Responsavel</span>
+                  <span>Status</span>
+                  <span>Prazo</span>
+                </div>
+                <div class="divide-y divide-gray-200 dark:divide-gray-800">
+                  <div
+                    class="grid grid-cols-[1.2fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>Renegociar fornecedor Atlas</span
+                    ><span>Tesouraria</span
+                    ><span
+                      class="text-warning-700 dark:text-warning-300 font-medium"
+                      >Em risco</span
+                    ><span>D+2</span>
+                  </div>
+                  <div
+                    class="grid grid-cols-[1.2fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>Reativar contas enterprise paradas</span
+                    ><span>Gerencia comercial</span
+                    ><span
+                      class="text-brand-700 dark:text-brand-300 font-medium"
+                      >Em execucao</span
+                    ><span>D+1</span>
+                  </div>
+                  <div
+                    class="grid grid-cols-[1.2fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>Redistribuir setup da linha 03</span
+                    ><span>Coordenacao fabril</span
+                    ><span
+                      class="text-warning-700 dark:text-warning-300 font-medium"
+                      >Atrasado</span
+                    ><span>Hoje</span>
+                  </div>
+                  <div
+                    class="grid grid-cols-[1.2fr_1fr_1fr_1fr] px-4 py-4 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span>Antecipar reposicao dos SKUs A13 e A18</span
+                    ><span>Planejamento logistico</span
+                    ><span
+                      class="text-success-700 dark:text-success-300 font-medium"
+                      >Controlado</span
+                    ><span>D+3</span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </section>
           </div>
         </main>
-        <!-- ===== Main Content End ===== -->
       </div>
-      <!-- ===== Content Area End ===== -->
     </div>
-    <!-- ===== Page Wrapper End ===== -->
   </body>
 </html>

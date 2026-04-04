@@ -1,0 +1,84 @@
+<div class="mb-6 space-y-4">
+  <include src="../breadcrumb.html"></include>
+
+  <section
+    class="rounded-2xl border border-gray-200 bg-white px-5 py-5 sm:px-6 dark:border-gray-800 dark:bg-white/[0.03]"
+  >
+    <div
+      class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
+    >
+      <div class="max-w-3xl space-y-3">
+        <span
+          class="inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+          :class="$store.navigation.getPageMeta(page).badgeClass"
+          x-text="$store.navigation.getPageMeta(page).domainLabel"
+        ></span>
+
+        <div>
+          <h1
+            class="text-2xl font-semibold text-gray-800 sm:text-3xl dark:text-white/90"
+            x-text="$store.navigation.getPageMeta(page).title"
+          ></h1>
+          <p
+            class="mt-2 text-sm leading-6 text-gray-500 sm:text-base dark:text-gray-400"
+            x-text="$store.navigation.getPageMeta(page).description"
+          ></p>
+        </div>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2 xl:min-w-[520px] xl:grid-cols-2">
+        <div
+          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
+        >
+          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
+            >Foco</span
+          >
+          <p
+            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
+            x-text="$store.navigation.getPageMeta(page).focus"
+          ></p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
+        >
+          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
+            >Tipo de dashboard</span
+          >
+          <p
+            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
+            x-text="$store.navigation.getPageMeta(page).levelLabel"
+          ></p>
+          <p
+            class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400"
+            x-text="$store.navigation.getPageMeta(page).levelDescription"
+          ></p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
+        >
+          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
+            >Publico principal</span
+          >
+          <p
+            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
+            x-text="$store.navigation.getPageMeta(page).audience"
+          ></p>
+        </div>
+
+        <div
+          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
+        >
+          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
+            >Cadencia</span
+          >
+          <p
+            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
+            x-text="$store.navigation.getPageMeta(page).cadence"
+          ></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
