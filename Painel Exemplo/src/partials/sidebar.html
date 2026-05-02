@@ -95,14 +95,13 @@
           <template x-for="group in $store.navigation.groups" :key="group.key">
             <li>
               <a
-                href="#"
-                @click.prevent="selected = selected === group.key ? '' : group.key"
+                :href="group.href"
                 class="menu-item group"
-                :class="selected === group.key || $store.navigation.isGroupActive(group.key, page) ? 'menu-item-active' : 'menu-item-inactive'"
+                :class="page === group.key ? 'menu-item-active' : 'menu-item-inactive'"
               >
                 <span
                   class="flex h-6 w-6 items-center justify-center"
-                  x-html="$store.navigation.getIcon(group.icon, selected === group.key || $store.navigation.isGroupActive(group.key, page) ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+                  x-html="$store.navigation.getIcon(group.icon, page === group.key ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
                 ></span>
 
                 <span
@@ -110,90 +109,12 @@
                   :class="sidebarToggle ? 'lg:hidden' : ''"
                   x-text="group.label"
                 ></span>
-
-                <svg
-                  class="menu-item-arrow"
-                  :class="[(selected === group.key) ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive', sidebarToggle ? 'lg:hidden' : '' ]"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
-                    stroke=""
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
               </a>
-
-              <div
-                class="translate transform overflow-hidden"
-                :class="selected === group.key ? 'block' : 'hidden'"
-              >
-                <ul
-                  :class="sidebarToggle ? 'lg:hidden' : 'flex'"
-                  class="menu-dropdown mt-2 flex flex-col gap-1 pl-9"
-                >
-                  <template x-for="item in group.pages" :key="item.key">
-                    <li>
-                      <a
-                        :href="item.href"
-                        class="menu-dropdown-item group"
-                        :class="page === item.key ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'"
-                      >
-                        <span x-text="item.label"></span>
-                      </a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
             </li>
           </template>
         </ul>
       </div>
 
-      <div class="mt-6">
-        <h3 class="mb-4 text-xs leading-[20px] text-gray-400 uppercase">
-          <span
-            class="menu-group-title"
-            :class="sidebarToggle ? 'lg:hidden' : ''"
-          >
-            Niveis de analise
-          </span>
-        </h3>
 
-        <div
-          :class="sidebarToggle ? 'lg:hidden' : 'space-y-3'"
-          class="space-y-3"
-        >
-          <template x-for="level in $store.navigation.levels" :key="level.key">
-            <a
-              :href="`index.html${level.anchor}`"
-              class="block rounded-2xl border bg-gray-50 px-4 py-3 transition hover:bg-white dark:bg-gray-900 dark:hover:bg-gray-800/80"
-              :class="level.borderClass"
-            >
-              <div class="flex items-center justify-between gap-3">
-                <span
-                  class="inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.16em] uppercase"
-                  :class="level.badgeClass"
-                  x-text="level.label"
-                ></span>
-                <span
-                  class="text-xs text-gray-400"
-                  x-text="$store.navigation.getPagesByLevel(level.key).length + ' paginas'"
-                ></span>
-              </div>
-              <p
-                class="mt-2 text-xs leading-5 text-gray-500 dark:text-gray-400"
-                x-text="level.description"
-              ></p>
-            </a>
-          </template>
-        </div>
-      </div>
     </nav>
 </aside>
