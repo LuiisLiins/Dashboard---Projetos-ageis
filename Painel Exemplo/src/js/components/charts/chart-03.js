@@ -5,11 +5,11 @@ const chart03 = () => {
   const chartThreeOptions = {
     series: [
       {
-        name: "Sales",
+        name: "Vendas",
         data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
       },
       {
-        name: "Revenue",
+        name: "Receita",
         data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
       },
     ],
@@ -20,6 +20,7 @@ const chart03 = () => {
     },
     colors: ["#465FFF", "#9CB9FF"],
     chart: {
+      id: "chartThree",
       fontFamily: "Outfit, sans-serif",
       height: 310,
       type: "area",
@@ -107,6 +108,33 @@ const chart03 = () => {
       chartThreeOptions,
     );
     chartThree.render();
+
+    window.addEventListener('dashboardDataFetched', (e) => {
+      const apiData = e.detail;
+      const page = document.querySelector('[x-data]').getAttribute('x-data');
+      
+      if (page.includes('overview') && apiData.charts?.evolucao_receita) {
+        chartThree.updateSeries([{
+          name: 'Receita',
+          data: apiData.charts.evolucao_receita.series
+        }]);
+        chartThree.updateOptions({
+          xaxis: { categories: apiData.charts.evolucao_receita.categories }
+        });
+      }
+      else if (page.includes('comercial') && apiData.charts?.funil_vendas) {
+        chartThree.updateSeries([{
+          name: 'Funil',
+          data: Object.values(apiData.charts.funil_vendas)
+        }]);
+        chartThree.updateOptions({
+          xaxis: { categories: Object.keys(apiData.charts.funil_vendas) }
+        });
+      }
+      else if (page.includes('clientes') && apiData.charts?.crescimento_base) {
+        // Exemplo, caso exista 'crescimento_base'
+      }
+    });
   }
 };
 

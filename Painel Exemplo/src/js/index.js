@@ -94,6 +94,33 @@ window.createAppShell = (pageKey) => ({
   stickyMenu: false,
   sidebarToggle: false,
   scrollTop: false,
+  
+  dashboardData: { kpis: {}, charts: {} },
+  
+  async fetchDashboardData() {
+    const endpoints = {
+      'overview': 'visao-geral',
+      'estrategico': 'estrategico',
+      'operacional': 'operacional',
+      'financeiro': 'financeiro',
+      'comercial': 'comercial',
+      'clientes': 'clientes',
+      'estoque': 'estoque'
+    };
+    const endpoint = endpoints[this.page];
+    if (endpoint) {
+      try {
+        const response = await fetch(`http://localhost:8000/api/dashboard/${endpoint}`);
+        if(response.ok) {
+            this.dashboardData = await response.json();
+            window.dispatchEvent(new CustomEvent('dashboardDataFetched', { detail: this.dashboardData }));
+        }
+      } catch (e) {
+        console.error("Erro ao conectar na API:", e);
+      }
+    }
+  },
+
   init() {
     const persistedDarkMode = localStorage.getItem("darkMode");
 
@@ -101,6 +128,8 @@ window.createAppShell = (pageKey) => ({
     this.$watch("darkMode", (value) => {
       localStorage.setItem("darkMode", JSON.stringify(value));
     });
+    
+    this.fetchDashboardData();
   },
 });
 

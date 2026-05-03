@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ 2.450.000</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.receita_ytd !== undefined ? dashboardData.kpis.receita_ytd.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+18% YTD</span>
                   </div>
                 </div>
@@ -50,14 +50,19 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Ticket Médio</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    Ticket Médio
+                    <button @click.prevent="$dispatch('open-info-modal', { term: 'Ticket Médio', description: 'Valor médio que cada cliente gasta em suas compras. É calculado dividindo a receita total pelo número de vendas.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                  </span>
                   <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M7 15h0M2 9.5h20"></path></svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ 5.250</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.ticket_medio_geral !== undefined ? dashboardData.kpis.ticket_medio_geral.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+5.2% vs ano passado</span>
                   </div>
                 </div>
@@ -74,7 +79,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">24.8%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.taxa_crescimento || '24.8'"></span>%</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Acima da meta (20%)</span>
                   </div>
                 </div>
@@ -84,14 +89,19 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">ROI</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    ROI
+                    <button @click.prevent="$dispatch('open-info-modal', { term: 'ROI (Retorno Sobre Investimento)', description: 'Métrica que indica o quanto a empresa ganhou ou perdeu em relação ao valor investido inicialmente.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                  </span>
                   <span class="flex h-8 w-8 items-center justify-center rounded-full bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">312%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.roi || '0'"></span>%</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Excelente</span>
                   </div>
                 </div>

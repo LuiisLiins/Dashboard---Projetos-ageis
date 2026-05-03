@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">1.254</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.clientes_ativos || '0'"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12% este ano</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">84</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.novos_clientes || '0'"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+5% vs meta</span>
                   </div>
                 </div>
@@ -67,15 +67,25 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Custo de Aquisição (CAC)</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    Custo de Aquisição (CAC)
+                    <button @click.prevent="$dispatch('open-info-modal', { term: 'CAC (Custo de Aquisição de Clientes)', description: 'O investimento médio necessário em marketing e vendas para atrair e conquistar um novo cliente.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                  </span>
                   <span class="flex h-8 w-8 items-center justify-center rounded-full bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ 150,00</h4>
-                    <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">LTV/CAC: 3.5x</span>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.cac_medio !== undefined ? dashboardData.kpis.cac_medio.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">
+                      LTV/CAC: 3.5x
+                      <button @click.prevent="$dispatch('open-info-modal', { term: 'LTV (Lifetime Value)', description: 'Valor do Ciclo de Vida. É a estimativa da receita média que um cliente gera ao longo de todo o tempo em que mantém relacionamento com a empresa.' })" class="text-gray-400 hover:text-warning-500 transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                      </button>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -84,14 +94,19 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Churn Rate</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    Churn Rate
+                    <button @click.prevent="$dispatch('open-info-modal', { term: 'Churn Rate (Taxa de Cancelamento)', description: 'Porcentagem de clientes que cancelaram o serviço ou deixaram de comprar em um determinado período.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                  </span>
                   <span class="flex h-8 w-8 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">2.1%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.churn_rate || '0'"></span>%</h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">+0.5% este mês</span>
                   </div>
                 </div>
