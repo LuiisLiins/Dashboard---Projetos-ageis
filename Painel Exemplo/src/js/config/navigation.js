@@ -24,76 +24,49 @@ const iconMap = {
       <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 6C3.25 4.48122 4.48122 3.25 6 3.25H13C14.5188 3.25 15.75 4.48122 15.75 6V6.25H16.5406C17.1893 6.25 17.7958 6.56556 18.1661 7.095L20.8755 10.9656C21.1533 11.3625 21.3022 11.8352 21.3022 12.3197V15C21.3022 15.4142 20.9664 15.75 20.5522 15.75H19.591C19.2525 17.0433 18.0773 18 16.6781 18C15.2789 18 14.1037 17.0433 13.7652 15.75H10.2369C9.89839 17.0433 8.72317 18 7.32397 18C5.92476 18 4.74955 17.0433 4.41102 15.75H3.75C3.33579 15.75 3 15.4142 3 15V6.25L3.25 6ZM15.75 7.75V12.75H19.7706V12.3197C19.7706 12.1478 19.7178 11.9801 19.6192 11.8392L16.9098 7.96856C16.8185 7.83805 16.6689 7.75 16.5092 7.75H15.75ZM14.25 14.25H13.7652C13.8545 13.9087 14.0022 13.5914 14.1972 13.31C14.1393 13.2341 14.0799 13.1593 14.0192 13.0856C13.889 12.9277 13.7997 12.7403 13.7588 12.5398C13.7337 12.4168 13.7249 12.2916 13.7325 12.167V6C13.7325 5.30964 13.1728 4.75 12.4825 4.75H6C5.30964 4.75 4.75 5.30964 4.75 6V14.25H4.41102C4.74955 12.9567 5.92476 12 7.32397 12C8.72317 12 9.89839 12.9567 10.2369 14.25H14.25ZM7.32397 13.5C6.49854 13.5 5.8293 14.1693 5.8293 14.9947C5.8293 15.8201 6.49854 16.4893 7.32397 16.4893C8.14939 16.4893 8.81863 15.8201 8.81863 14.9947C8.81863 14.1693 8.14939 13.5 7.32397 13.5ZM16.6781 13.5C15.8527 13.5 15.1834 14.1693 15.1834 14.9947C15.1834 15.8201 15.8527 16.4893 16.6781 16.4893C17.5035 16.4893 18.1728 15.8201 18.1728 14.9947C18.1728 14.1693 17.5035 13.5 16.6781 13.5Z" fill="currentColor"/>
     </svg>
   `,
+  customers: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C8.68629 2 6 4.68629 6 8C6 11.3137 8.68629 14 12 14C15.3137 14 18 11.3137 18 8C18 4.68629 15.3137 2 12 2ZM7.5 8C7.5 5.51472 9.51472 3.5 12 3.5C14.4853 3.5 16.5 5.51472 16.5 8C16.5 10.4853 14.4853 12.5 12 12.5C9.51472 12.5 7.5 10.4853 7.5 8ZM4.62939 21C4.33158 19.3879 5.09355 17.8106 6.4529 16.945C8.08316 15.9069 10.0076 15.5 12 15.5C13.9924 15.5 15.9168 15.9069 17.5471 16.945C18.9065 17.8106 19.6684 19.3879 19.3706 21H20.893C21.229 18.8923 20.1706 16.8209 18.3512 15.662C16.4862 14.4746 14.2818 14 12 14C9.71822 14 7.51382 14.4746 5.64878 15.662C3.82944 16.8209 2.77098 18.8923 3.10703 21H4.62939Z" fill="currentColor"/>
+    </svg>
+  `
 };
 
 export const navigationGroups = [
   {
+    key: "estrategico",
+    label: "Estratégico",
+    icon: "overview",
+    href: "estrategico.html",
+  },
+  {
+    key: "operacional",
+    label: "Operacional",
+    icon: "operations",
+    href: "operacional.html",
+  },
+  {
     key: "financeiro",
     label: "Financeiro",
     icon: "finance",
-    pages: [
-      {
-        key: "financeiro-dashboard",
-        label: "Visao geral",
-        href: "financeiro-dashboard.html",
-      },
-      {
-        key: "financeiro-fluxo-caixa",
-        label: "Fluxo de caixa",
-        href: "financeiro-fluxo-caixa.html",
-      },
-    ],
+    href: "financeiro.html",
   },
   {
     key: "comercial",
     label: "Comercial",
     icon: "sales",
-    pages: [
-      {
-        key: "comercial-dashboard",
-        label: "Visao de vendas",
-        href: "comercial-dashboard.html",
-      },
-      {
-        key: "comercial-pipeline",
-        label: "Pipeline",
-        href: "comercial-pipeline.html",
-      },
-    ],
+    href: "comercial.html",
   },
   {
-    key: "operacoes",
-    label: "Operacoes",
-    icon: "operations",
-    pages: [
-      {
-        key: "operacoes-dashboard",
-        label: "Visao operacional",
-        href: "operacoes-dashboard.html",
-      },
-      {
-        key: "operacoes-produtividade",
-        label: "Produtividade",
-        href: "operacoes-produtividade.html",
-      },
-    ],
+    key: "clientes",
+    label: "Clientes",
+    icon: "customers",
+    href: "clientes.html",
   },
   {
-    key: "logistica",
-    label: "Logistica",
+    key: "estoque",
+    label: "Estoque",
     icon: "logistics",
-    pages: [
-      {
-        key: "logistica-dashboard",
-        label: "Visao logistica",
-        href: "logistica-dashboard.html",
-      },
-      {
-        key: "logistica-estoque",
-        label: "Estoque",
-        href: "logistica-estoque.html",
-      },
-    ],
+    href: "estoque.html",
   },
 ];
 

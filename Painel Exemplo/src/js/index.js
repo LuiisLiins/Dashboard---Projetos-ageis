@@ -94,6 +94,191 @@ window.createAppShell = (pageKey) => ({
   stickyMenu: false,
   sidebarToggle: false,
   scrollTop: false,
+  
+  dashboardData: { kpis: {}, charts: {} },
+  profileData: { id: '', nome: '', email: '', senha: '', perfil_acesso_id: '' },
+  currentUser: {},
+  notificacoes: [],
+  unreadNotificacoes: 0,
+
+  timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    if (diffInSeconds < 60) return `${diffInSeconds} seg atrás`;
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes} min atrás`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} h atrás`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} d atrás`;
+  },
+
+  async fetchNotificacoes() {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+    try {
+      const response = await fetch('http://localhost:8000/api/notificacoes', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        this.notificacoes = await response.json();
+        this.unreadNotificacoes = this.notificacoes.filter(n => !n.lida).length;
+      }
+    } catch (e) {
+      console.error('Erro ao buscar notificacoes', e);
+    }
+  },
+
+  async fetchProfile() {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+    try {
+      const response = await fetch('http://localhost:8000/api/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        this.profileData.id = data.id;
+        this.profileData.nome = data.nome;
+        this.profileData.email = data.email;
+        this.profileData.perfil_acesso_id = data.perfil_acesso_id;
+        this.currentUser = data;
+        localStorage.setItem('user', JSON.stringify(data));
+      }
+    } catch (e) {
+      console.error('Erro ao buscar perfil', e);
+    }
+  },
+
+  async updateProfile() {
+    const token = localStorage.getItem('auth_token');
+    const payload = {
+      nome: this.profileData.nome,
+      email: this.profileData.email,
+      perfil_acesso_id: this.profileData.perfil_acesso_id
+    };
+    if (this.profileData.senha) {
+      payload.senha = this.profileData.senha;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/usuarios/${this.profileData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (response.ok) {
+        alert('Perfil atualizado com sucesso!');
+        this.profileData.senha = '';
+        this.currentUser.nome = this.profileData.nome;
+        this.currentUser.email = this.profileData.email;
+        localStorage.setItem('user', JSON.stringify(this.currentUser));
+      } else {
+        const errorData = await response.json();
+        alert('Erro ao atualizar: ' + (errorData.message || 'Verifique os dados.'));
+      }
+    } catch (e) {
+      console.error('Erro ao atualizar perfil', e);
+      alert('Erro de conexão ao atualizar perfil.');
+    }
+  },
+  
+  formatNumber(value, decimals = 0) {
+    if (value === undefined || value === null) return '0' + (decimals > 0 ? ',' + '0'.repeat(decimals) : '');
+    const num = Number(value);
+    if (isNaN(num)) return '0' + (decimals > 0 ? ',' + '0'.repeat(decimals) : '');
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  },
+
+  async fetchDashboardData() {
+    const token = localStorage.getItem('auth_token');
+    if (!token && this.page !== 'login') {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const endpoints = {
+      'overview': 'visao-geral',
+      'estrategico': 'estrategico',
+      'operacional': 'operacional',
+      'financeiro': 'financeiro',
+      'comercial': 'comercial',
+      'clientes': 'clientes',
+      'estoque': 'estoque'
+    };
+    const endpoint = endpoints[this.page];
+    if (endpoint) {
+      try {
+        const response = await fetch(`http://localhost:8000/api/dashboard/${endpoint}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if(response.ok) {
+            this.dashboardData = await response.json();
+            window.dispatchEvent(new CustomEvent('dashboardDataFetched', { detail: this.dashboardData }));
+        } else if (response.status === 401) {
+            localStorage.removeItem('auth_token');
+            window.location.href = 'login.html';
+        }
+      } catch (e) {
+        console.error("Erro ao conectar na API:", e);
+      }
+    }
+  },
+
+  async realizarLogin(email, senha) {
+    try {
+        const response = await fetch('http://localhost:8000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ email, senha })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('auth_token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            alert('Login feito com sucesso!');
+            window.location.href = 'index.html';
+        } else {
+            alert(data.message || 'Erro ao fazer login.');
+        }
+    } catch (error) {
+        console.error('Erro na requisição', error);
+        alert('Erro de conexão com o servidor.');
+    }
+  },
+
+  async fazerLogout() {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+          try {
+              await fetch('http://localhost:8000/api/logout', {
+                  method: 'POST',
+                  headers: {
+                      'Accept': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  }
+              });
+          } catch (e) {
+              console.error('Erro ao fazer logout', e);
+          }
+      }
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+  },
+
   init() {
     const persistedDarkMode = localStorage.getItem("darkMode");
 
@@ -101,6 +286,24 @@ window.createAppShell = (pageKey) => ({
     this.$watch("darkMode", (value) => {
       localStorage.setItem("darkMode", JSON.stringify(value));
     });
+    
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+        try {
+            this.currentUser = JSON.parse(storedUser);
+        } catch (e) {
+            console.error("Erro ao fazer parse do usuário", e);
+        }
+    }
+
+    if (this.page !== 'login') {
+      this.fetchNotificacoes();
+      if (this.page === 'profile') {
+        this.fetchProfile();
+      } else {
+        this.fetchDashboardData();
+      }
+    }
   },
 });
 
