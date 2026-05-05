@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.receita_ytd !== undefined ? dashboardData.kpis.receita_ytd.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.receita_ytd, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+18% YTD</span>
                   </div>
                 </div>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.ticket_medio_geral !== undefined ? dashboardData.kpis.ticket_medio_geral.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.ticket_medio_geral, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+5.2% vs ano passado</span>
                   </div>
                 </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.taxa_crescimento || '24.8'"></span>%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.taxa_crescimento, 1)"></span>%</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Acima da meta (20%)</span>
                   </div>
                 </div>
@@ -101,7 +101,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.roi || '0'"></span>%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.roi, 1)"></span>%</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Excelente</span>
                   </div>
                 </div>

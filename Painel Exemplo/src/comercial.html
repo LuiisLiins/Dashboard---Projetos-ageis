@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.total_vendas !== undefined ? dashboardData.kpis.total_vendas.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.total_vendas, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+15% YTD</span>
                   </div>
                 </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.ticket_medio !== undefined ? dashboardData.kpis.ticket_medio.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.ticket_medio, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+2.3% vs meta</span>
                   </div>
                 </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.taxa_conversao || '0'"></span>%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.taxa_conversao, 1)"></span>%</h4>
                     <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">Atenção ao funil</span>
                   </div>
                 </div>

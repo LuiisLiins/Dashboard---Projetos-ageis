@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.total_receitas !== undefined ? dashboardData.kpis.total_receitas.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.total_receitas, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+8.4% YTD</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.total_despesas !== undefined ? dashboardData.kpis.total_despesas.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.total_despesas, 2)"></span></h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1">+2.1% YTD</span>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.lucro_liquido !== undefined ? dashboardData.kpis.lucro_liquido.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.lucro_liquido, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Margem: 43.1%</span>
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.valor_inadimplencia !== undefined ? dashboardData.kpis.valor_inadimplencia.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.valor_inadimplencia, 2)"></span></h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">R$ 18.250 em aberto</span>
                   </div>
                 </div>

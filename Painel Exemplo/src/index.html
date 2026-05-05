@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.receita_total !== undefined ? dashboardData.kpis.receita_total.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.receita_total, 2)"></span></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12.5% em relação ao mês anterior</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.quantidade_vendas || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.quantidade_vendas)"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+4.2% em relação ao mês anterior</span>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.novos_clientes || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.novos_clientes)"></h4>
                     <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">-1.5% em relação ao mês anterior</span>
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.titulos_pendentes || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.titulos_pendentes)"></h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">R$ 12.450 a vencer hoje</span>
                   </div>
                 </div>

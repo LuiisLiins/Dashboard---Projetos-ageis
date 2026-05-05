@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.valor_estoque !== undefined ? dashboardData.kpis.valor_estoque.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.valor_estoque, 2)"></span></h4>
                     <span class="text-sm text-gray-500 mt-1 flex items-center gap-1">Em 12.500 itens</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.giro_estoque || '4.2'"></span>x</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.giro_estoque, 1)"></span>x</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Acima da média</span>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.risco_ruptura || '0'"></span> Itens</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.risco_ruptura)"></span> Itens</h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">Baixo estoque</span>
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.prazo_medio_reposicao || '0'"></span> Dias</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.prazo_medio_reposicao)"></span> Dias</h4>
                     <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">Atraso em 3 ped.</span>
                   </div>
                 </div>

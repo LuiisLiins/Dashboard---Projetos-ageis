@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.em_andamento || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.em_andamento)"></h4>
                     <span class="text-sm text-gray-500 mt-1 flex items-center gap-1">Em execução nas linhas</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.concluidos_hoje || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.concluidos_hoje)"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12% vs ontem</span>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.pendencias || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.pendencias)"></h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1">Exigem atenção</span>
                   </div>
                 </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.tma_horas || '0'"></span>h</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.tma_horas, 1)"></span>h</h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">-5m vs semana passada</span>
                   </div>
                 </div>

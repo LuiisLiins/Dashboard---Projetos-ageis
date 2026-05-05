@@ -40,7 +40,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.clientes_ativos || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.clientes_ativos)"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12% este ano</span>
                   </div>
                 </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="dashboardData.kpis.novos_clientes || '0'"></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.novos_clientes)"></h4>
                     <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+5% vs meta</span>
                   </div>
                 </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="dashboardData.kpis.cac_medio !== undefined ? dashboardData.kpis.cac_medio.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00'"></span></h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.cac_medio, 2)"></span></h4>
                     <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">
                       LTV/CAC: 3.5x
                       <button @click.prevent="$dispatch('open-info-modal', { term: 'LTV (Lifetime Value)', description: 'Valor do Ciclo de Vida. É a estimativa da receita média que um cliente gera ao longo de todo o tempo em que mantém relacionamento com a empresa.' })" class="text-gray-400 hover:text-warning-500 transition-colors">
@@ -106,7 +106,7 @@
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="dashboardData.kpis.churn_rate || '0'"></span>%</h4>
+                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.churn_rate, 1)"></span>%</h4>
                     <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">+0.5% este mês</span>
                   </div>
                 </div>

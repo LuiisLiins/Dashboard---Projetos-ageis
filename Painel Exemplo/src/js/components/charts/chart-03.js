@@ -118,8 +118,21 @@ const chart03 = () => {
           name: 'Receita',
           data: apiData.charts.evolucao_receita.series
         }]);
+
+        const formatCategoryDate = (val) => {
+          if (typeof val === 'string' && val.match(/^\d{4}-\d{2}/)) {
+             const parts = val.split('-');
+             const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+             const mIndex = parseInt(parts[1], 10) - 1;
+             if (mIndex >= 0 && mIndex < 12) {
+                 return `${months[mIndex]}/${parts[0].slice(-2)}`;
+             }
+          }
+          return val;
+        };
+
         chartThree.updateOptions({
-          xaxis: { categories: apiData.charts.evolucao_receita.categories }
+          xaxis: { categories: apiData.charts.evolucao_receita.categories.map(formatCategoryDate) }
         });
       }
       else if (page.includes('comercial') && apiData.charts?.funil_vendas) {
