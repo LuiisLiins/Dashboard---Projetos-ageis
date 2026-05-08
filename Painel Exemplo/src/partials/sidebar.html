@@ -87,34 +87,205 @@
             class="menu-group-title"
             :class="sidebarToggle ? 'lg:hidden' : ''"
           >
-            Dominios
+            Dashboards
           </span>
         </h3>
 
-        <ul class="flex flex-col gap-4">
-          <template x-for="group in $store.navigation.groups" :key="group.key">
-            <li>
-              <a
-                :href="group.href"
-                class="menu-item group"
-                :class="page === group.key ? 'menu-item-active' : 'menu-item-inactive'"
+        <ul class="mb-6 flex flex-col gap-3">
+          <li>
+            <a
+              href="estrategico.html"
+              class="menu-item group"
+              :class="page === 'estrategico' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('overview', page === 'estrategico' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
               >
-                <span
-                  class="flex h-6 w-6 items-center justify-center"
-                  x-html="$store.navigation.getIcon(group.icon, page === group.key ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
-                ></span>
-
-                <span
-                  class="menu-item-text"
-                  :class="sidebarToggle ? 'lg:hidden' : ''"
-                  x-text="group.label"
-                ></span>
-              </a>
-            </li>
-          </template>
+                Estratégico
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="operacional.html"
+              class="menu-item group"
+              :class="page === 'operacional' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('operations', page === 'operacional' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Operacional
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="financeiro.html"
+              class="menu-item group"
+              :class="page === 'financeiro' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('finance', page === 'financeiro' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Financeiro
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="comercial.html"
+              class="menu-item group"
+              :class="page === 'comercial' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('sales', page === 'comercial' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Comercial
+              </span>
+            </a>
+          </li>
         </ul>
       </div>
 
+      <div>
+        <h3 class="mb-4 text-xs leading-[20px] text-gray-400 uppercase">
+          <span
+            class="menu-group-title"
+            :class="sidebarToggle ? 'lg:hidden' : ''"
+          >
+            Modulos
+          </span>
+        </h3>
+
+        <ul class="mb-6 flex flex-col gap-3">
+          <li>
+            <a
+              href="clientes.html"
+              class="menu-item group"
+              :class="page === 'clientes' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('customers', page === 'clientes' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Clientes
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="estoque.html"
+              class="menu-item group"
+              :class="page === 'estoque' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('logistics', page === 'estoque' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Estoque
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="previsao.html"
+              class="menu-item group"
+              :class="page === 'previsao' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('forecast', page === 'previsao' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Previsão
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="mb-4 text-xs leading-[20px] text-gray-400 uppercase">
+          <span
+            class="menu-group-title"
+            :class="sidebarToggle ? 'lg:hidden' : ''"
+          >
+            Sistema
+          </span>
+        </h3>
+
+        <ul class="mb-6 flex flex-col gap-3">
+          <li>
+            <a
+              href="logs.html"
+              class="menu-item group"
+              :class="page === 'logs' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Logs do Sistema
+              </span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="empresa.html"
+              class="menu-item group"
+              :class="page === 'empresa' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              </span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Detalhes da Empresa
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
     </nav>
 </aside>

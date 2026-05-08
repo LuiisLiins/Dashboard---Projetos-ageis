@@ -1,0 +1,140 @@
+<div
+  x-data="{
+    isOpen: false,
+    productIds: [],
+    selectedProducts: [],
+    attributes: [],
+    openModal(data) {
+      try {
+        this.productIds = data?.productIds || [];
+        this.loadCompareData();
+        this.isOpen = true;
+      } catch (error) {
+        console.error('Erro ao abrir modal:', error);
+        alert('Erro ao abrir comparação de produtos');
+      }
+    },
+    loadCompareData() {
+      try {
+        const allProducts = {
+          1: { id: 1, nome: 'Notebook Dell Inspiron 15', sku: 'SKU-001', categoria: 'Eletrônicos', quantidade: 45, preco_unitario: 3500.00, valor_total: 157500.00, status: 'OK' },
+          2: { id: 2, nome: 'Mouse Logitech MX Master', sku: 'SKU-002', categoria: 'Periféricos', quantidade: 128, preco_unitario: 280.00, valor_total: 35840.00, status: 'OK' },
+          3: { id: 3, nome: 'Teclado Mecânico RGB', sku: 'SKU-003', categoria: 'Periféricos', quantidade: 23, preco_unitario: 450.00, valor_total: 10350.00, status: 'Baixo' },
+          4: { id: 4, nome: 'Monitor LG 27\" 4K', sku: 'SKU-004', categoria: 'Monitores', quantidade: 18, preco_unitario: 1800.00, valor_total: 32400.00, status: 'OK' },
+          5: { id: 5, nome: 'Webcam HD 1080p', sku: 'SKU-005', categoria: 'Periféricos', quantidade: 5, preco_unitario: 320.00, valor_total: 1600.00, status: 'Crítico' },
+          6: { id: 6, nome: 'Headphone Gamer', sku: 'SKU-006', categoria: 'Áudio', quantidade: 67, preco_unitario: 420.00, valor_total: 28140.00, status: 'OK' }
+        };
+        
+        this.selectedProducts = this.productIds
+          .map(id => allProducts[Number(id)])
+          .filter(p => p !== undefined);
+        
+        if (this.selectedProducts.length === 0) {
+          console.warn('Nenhum produto encontrado');
+          return;
+        }
+        
+        const allKeys = new Set();
+        this.selectedProducts.forEach(p => {
+          if (p && typeof p === 'object') {
+            Object.keys(p).forEach(k => allKeys.add(k));
+          }
+        });
+        this.attributes = Array.from(allKeys)
+          .filter(k => k !== 'id' && k !== 'valor_total')
+          .sort();
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    },
+    getAttributeClass(attrName) {
+      try {
+        const values = this.selectedProducts.map(p => p?.[attrName]);
+        const allSame = values.every(v => v === values[0]);
+        return allSame ? 'text-gray-500' : 'text-red-600 font-bold';
+      } catch (error) {
+        return 'text-gray-500';
+      }
+    },
+    formatValue(value) {
+      try {
+        if (typeof value === 'number') {
+          return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+        return String(value);
+      } catch (error) {
+        return String(value);
+      }
+    }
+  }"
+  @open-compare-modal.window="openModal($event.detail)"
+  x-show="isOpen"
+  style="display: none;"
+  @click="if ($event.target === $el) isOpen = false"
+  class="fixed inset-0 z-[999999] flex items-center justify-center bg-black/50 px-4"
+>
+  <div
+    @click.stop
+    class="w-full max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-900 dark:border dark:border-gray-800"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Comparação de Produtos</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1" x-text="`${selectedProducts.length} produto(s) selecionado(s)`"></p>
+      </div>
+      <button @click="isOpen = false" class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Grid Cards -->
+    <div class="grid gap-4 mb-6" :class="selectedProducts.length === 1 ? 'grid-cols-1' : selectedProducts.length === 2 ? 'grid-cols-2' : 'grid-cols-3'">
+      <template x-for="product in selectedProducts" :key="product.id">
+        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+          <div class="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+            <h4 class="font-bold text-gray-900 dark:text-white" x-text="product.nome"></h4>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              <span x-text="product.sku + ' • ' + product.categoria"></span>
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <template x-for="attr in attributes" :key="attr">
+              <div class="text-sm">
+                <div class="font-medium text-gray-700 dark:text-gray-300 capitalize text-xs" x-text="attr.replace(/_/g, ' ')"></div>
+                <div :class="getAttributeClass(attr)" class="text-sm">
+                  <span x-text="attr.includes('preco') || attr.includes('valor') ? formatValue(product[attr]) : product[attr]"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+            <div x-show="product.status === 'OK'" class="inline-block rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-500/20 dark:text-green-300">
+              <span x-text="product.status"></span>
+            </div>
+            <div x-show="product.status === 'Baixo'" class="inline-block rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300">
+              <span x-text="product.status"></span>
+            </div>
+            <div x-show="product.status === 'Crítico'" class="inline-block rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-500/20 dark:text-red-300">
+              <span x-text="product.status"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
+      <p class="text-sm text-gray-600 dark:text-gray-400">Legenda: <span class="font-bold text-red-600">vermelho</span> = diferenças encontradas</p>
+      <div class="flex gap-2">
+        <button @click="isOpen = false" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,7 +10,21 @@
     <title>Dashboard Estoque | Dashboard Multidominio</title>
   </head>
   <body
-    x-data="createAppShell('estoque')"
+    x-data="{
+      ...createAppShell('estoque'),
+      selectedProducts: [],
+      toggleAllProducts() {
+        const allIds = (this.dashboardData.produtos || []).map(p => p.id);
+        this.selectedProducts.length === allIds.length ? this.selectedProducts = [] : this.selectedProducts = allIds;
+      },
+      toggleProduct(id) {
+        this.selectedProducts.includes(id) ? this.selectedProducts = this.selectedProducts.filter(p => p !== id) : this.selectedProducts.push(id);
+      },
+      compareProducts() {
+        if (this.selectedProducts.length === 0) { alert('Selecione pelo menos 1 produto'); return; }
+        window.dispatchEvent(new CustomEvent('open-compare-modal', { detail: { productIds: [...this.selectedProducts] } }));
+      }
+    }"
     :class="{'dark bg-gray-900': darkMode === true}"
   >
     <include src="./partials/preloader.html"></include>
@@ -33,15 +47,45 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Valor em Estoque</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Valor em Estoque</span
+                  >
+                  <span
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                      ></path>
+                      <polyline
+                        points="3.27 6.96 12 12.01 20.73 6.96"
+                      ></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.valor_estoque, 2)"></span></h4>
-                    <span class="text-sm text-gray-500 mt-1 flex items-center gap-1">Em 12.500 itens</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      R$
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.valor_estoque, 2)"
+                      ></span>
+                    </h4>
+                    <span
+                      class="mt-1 flex items-center gap-1 text-sm text-gray-500"
+                      >Em 12.500 itens</span
+                    >
                   </div>
                 </div>
               </div>
@@ -50,15 +94,43 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Giro de Estoque</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Giro de Estoque</span
+                  >
+                  <span
+                    class="bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <polyline points="1 20 1 14 7 14"></polyline>
+                      <path
+                        d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                      ></path>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.giro_estoque, 1)"></span>x</h4>
-                    <span class="text-sm text-success-500 mt-1 flex items-center gap-1">Acima da média</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.giro_estoque, 1)"
+                      ></span
+                      >x
+                    </h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      >Acima da média</span
+                    >
                   </div>
                 </div>
               </div>
@@ -67,15 +139,43 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Risco de Ruptura</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Risco de Ruptura</span
+                  >
+                  <span
+                    class="bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                      ></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.risco_ruptura)"></span> Itens</h4>
-                    <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">Baixo estoque</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.risco_ruptura)"
+                      ></span>
+                      Itens
+                    </h4>
+                    <span
+                      class="text-error-500 mt-1 flex items-center gap-1 text-sm text-red-500"
+                      >Baixo estoque</span
+                    >
                   </div>
                 </div>
               </div>
@@ -84,15 +184,40 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Prazo de Reposição</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Prazo de Reposição</span
+                  >
+                  <span
+                    class="bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.prazo_medio_reposicao)"></span> Dias</h4>
-                    <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">Atraso em 3 ped.</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.prazo_medio_reposicao)"
+                      ></span>
+                      Dias
+                    </h4>
+                    <span
+                      class="text-warning-500 mt-1 flex items-center gap-1 text-sm"
+                      >Atraso em 3 ped.</span
+                    >
                   </div>
                 </div>
               </div>
@@ -111,7 +236,7 @@
                     </h3>
                   </div>
                 </div>
-                <div class="max-w-full overflow-x-auto custom-scrollbar">
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
                   <div id="chartThree" class="min-w-[400px]"></div>
                 </div>
               </div>
@@ -128,8 +253,250 @@
                     </h3>
                   </div>
                 </div>
-                <div class="max-w-full overflow-x-auto custom-scrollbar">
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
                   <div id="chartOne" class="min-w-[400px]"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div
+                  class="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-gray-900 dark:text-white"
+                    >
+                      Lista de Produtos
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      Controle de inventário e disponibilidade
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  class="mb-4 flex flex-col gap-3 md:flex-row md:items-center"
+                >
+                  <input
+                    type="text"
+                    placeholder="Buscar produto, SKU ou categoria..."
+                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @input="$dispatch('search-produtos', { query: $event.target.value })"
+                  />
+                  <select
+                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @change="$dispatch('filter-status', { status: $event.target.value })"
+                  >
+                    <option value="">Todos os Status</option>
+                    <option value="ok">OK</option>
+                    <option value="baixo">Baixo</option>
+                    <option value="critico">Crítico</option>
+                  </select>
+                </div>
+
+                <div
+                  class="mb-4 flex items-center gap-2"
+                  x-show="selectedProducts.length > 0"
+                >
+                  <button
+                    @click="compareProducts"
+                    class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                  >
+                    Comparar
+                    <span
+                      class="font-bold"
+                      x-text="'(' + selectedProducts.length + ')'"
+                    ></span>
+                  </button>
+                  <button
+                    @click="selectedProducts = []"
+                    class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    Limpar Seleção
+                  </button>
+                </div>
+
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th
+                          class="w-12 px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          <input
+                            type="checkbox"
+                            class="text-brand-600 h-4 w-4 rounded border-gray-300"
+                            @change="toggleAllProducts"
+                            :checked="selectedProducts.length > 0 && selectedProducts.length === (dashboardData.produtos || []).length"
+                          />
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Produto
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          SKU
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Categoria
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Quantidade
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          V. Unitário
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          V. Total
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template
+                        x-for="(product, index) in dashboardData.produtos || []"
+                        :key="product.id"
+                      >
+                        <tr
+                          class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                        >
+                          <td class="w-12 px-4 py-3 text-center">
+                            <input
+                              type="checkbox"
+                              class="text-brand-600 h-4 w-4 rounded border-gray-300"
+                              @change="toggleProduct(product.id)"
+                              :checked="selectedProducts.includes(product.id)"
+                            />
+                          </td>
+                          <td
+                            class="px-4 py-3 font-medium text-gray-800 dark:text-gray-200"
+                            x-text="product.nome"
+                          ></td>
+                          <td
+                            class="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400"
+                            x-text="product.sku"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-600 dark:text-gray-400"
+                            x-text="product.categoria"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-800 dark:text-gray-200"
+                            x-text="product.quantidade"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-600 dark:text-gray-400"
+                            x-text="'R$ ' + formatNumber(product.preco_unitario, 2)"
+                          ></td>
+                          <td
+                            class="px-4 py-3 font-semibold text-gray-800 dark:text-gray-200"
+                            x-text="'R$ ' + formatNumber(product.quantidade * product.preco_unitario, 2)"
+                          ></td>
+                          <td class="px-4 py-3">
+                            <div
+                              x-show="product.status === 'OK'"
+                              class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
+                            >
+                              OK
+                            </div>
+                            <div
+                              x-show="product.status === 'Baixo'"
+                              class="bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
+                            >
+                              Baixo
+                            </div>
+                            <div
+                              x-show="product.status === 'Crítico'"
+                              class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
+                            >
+                              Crítico
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
+                >
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Mostrando
+                    <span
+                      class="font-semibold"
+                      x-text="(dashboardData.produtosPage - 1) * 6 + 1"
+                    ></span>
+                    a
+                    <span
+                      class="font-semibold"
+                      x-text="Math.min(dashboardData.produtosPage * 6, dashboardData.produtosTotal || (dashboardData.produtos || []).length)"
+                    ></span>
+                    de
+                    <span
+                      class="font-semibold"
+                      x-text="dashboardData.produtosTotal || (dashboardData.produtos || []).length"
+                    ></span>
+                    produtos
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('prev-page-produtos')"
+                    >
+                      ← Anterior
+                    </button>
+                    <div class="flex items-center gap-1">
+                      <button
+                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
+                      >
+                        1
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        2
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        3
+                      </button>
+                      <span class="px-2 text-gray-600 dark:text-gray-400"
+                        >...</span
+                      >
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        57
+                      </button>
+                    </div>
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('next-page-produtos')"
+                    >
+                      Próximo →
+                    </button>
+                  </div>
                 </div>
               </div>
             </section>
@@ -137,5 +504,6 @@
         </main>
       </div>
     </div>
+    <include src="./partials/compare-modal.html"></include>
   </body>
 </html>

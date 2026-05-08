@@ -94,9 +94,9 @@ window.createAppShell = (pageKey) => ({
   stickyMenu: false,
   sidebarToggle: false,
   scrollTop: false,
-  
+
   dashboardData: { kpis: {}, charts: {} },
-  profileData: { id: '', nome: '', email: '', senha: '', perfil_acesso_id: '' },
+  profileData: { id: "", nome: "", email: "", senha: "", perfil_acesso_id: "" },
   currentUser: {},
   notificacoes: [],
   unreadNotificacoes: 0,
@@ -115,27 +115,29 @@ window.createAppShell = (pageKey) => ({
   },
 
   async fetchNotificacoes() {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     if (!token) return;
     try {
-      const response = await fetch('http://localhost:8000/api/notificacoes', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch("http://localhost:8000/api/notificacoes", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
         this.notificacoes = await response.json();
-        this.unreadNotificacoes = this.notificacoes.filter(n => !n.lida).length;
+        this.unreadNotificacoes = this.notificacoes.filter(
+          (n) => !n.lida,
+        ).length;
       }
     } catch (e) {
-      console.error('Erro ao buscar notificacoes', e);
+      console.error("Erro ao buscar notificacoes", e);
     }
   },
 
   async fetchProfile() {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     if (!token) return;
     try {
-      const response = await fetch('http://localhost:8000/api/me', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await fetch("http://localhost:8000/api/me", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
         const data = await response.json();
@@ -144,89 +146,106 @@ window.createAppShell = (pageKey) => ({
         this.profileData.email = data.email;
         this.profileData.perfil_acesso_id = data.perfil_acesso_id;
         this.currentUser = data;
-        localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify(data));
       }
     } catch (e) {
-      console.error('Erro ao buscar perfil', e);
+      console.error("Erro ao buscar perfil", e);
     }
   },
 
   async updateProfile() {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     const payload = {
       nome: this.profileData.nome,
       email: this.profileData.email,
-      perfil_acesso_id: this.profileData.perfil_acesso_id
+      perfil_acesso_id: this.profileData.perfil_acesso_id,
     };
     if (this.profileData.senha) {
       payload.senha = this.profileData.senha;
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/api/usuarios/${this.profileData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        `http://localhost:8000/api/usuarios/${this.profileData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload)
-      });
+      );
       if (response.ok) {
-        alert('Perfil atualizado com sucesso!');
-        this.profileData.senha = '';
+        alert("Perfil atualizado com sucesso!");
+        this.profileData.senha = "";
         this.currentUser.nome = this.profileData.nome;
         this.currentUser.email = this.profileData.email;
-        localStorage.setItem('user', JSON.stringify(this.currentUser));
+        localStorage.setItem("user", JSON.stringify(this.currentUser));
       } else {
         const errorData = await response.json();
-        alert('Erro ao atualizar: ' + (errorData.message || 'Verifique os dados.'));
+        alert(
+          "Erro ao atualizar: " + (errorData.message || "Verifique os dados."),
+        );
       }
     } catch (e) {
-      console.error('Erro ao atualizar perfil', e);
-      alert('Erro de conexão ao atualizar perfil.');
+      console.error("Erro ao atualizar perfil", e);
+      alert("Erro de conexão ao atualizar perfil.");
     }
   },
-  
+
   formatNumber(value, decimals = 0) {
-    if (value === undefined || value === null) return '0' + (decimals > 0 ? ',' + '0'.repeat(decimals) : '');
+    if (value === undefined || value === null)
+      return "0" + (decimals > 0 ? "," + "0".repeat(decimals) : "");
     const num = Number(value);
-    if (isNaN(num)) return '0' + (decimals > 0 ? ',' + '0'.repeat(decimals) : '');
-    return num.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    if (isNaN(num))
+      return "0" + (decimals > 0 ? "," + "0".repeat(decimals) : "");
+    return num.toLocaleString("pt-BR", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
   },
 
   async fetchDashboardData() {
-    const token = localStorage.getItem('auth_token');
-    if (!token && this.page !== 'login') {
-        window.location.href = 'login.html';
-        return;
+    const token = localStorage.getItem("auth_token");
+    if (!token && this.page !== "login") {
+      window.location.href = "login.html";
+      return;
     }
 
     const endpoints = {
-      'overview': 'visao-geral',
-      'estrategico': 'estrategico',
-      'operacional': 'operacional',
-      'financeiro': 'financeiro',
-      'comercial': 'comercial',
-      'clientes': 'clientes',
-      'estoque': 'estoque'
+      overview: "visao-geral",
+      estrategico: "estrategico",
+      operacional: "operacional",
+      financeiro: "financeiro",
+      comercial: "comercial",
+      clientes: "clientes",
+      estoque: "estoque",
     };
     const endpoint = endpoints[this.page];
     if (endpoint) {
       try {
-        const response = await fetch(`http://localhost:8000/api/dashboard/${endpoint}`, {
-            method: 'GET',
+        const response = await fetch(
+          `http://localhost:8000/api/dashboard/${endpoint}`,
+          {
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if(response.ok) {
-            this.dashboardData = await response.json();
-            window.dispatchEvent(new CustomEvent('dashboardDataFetched', { detail: this.dashboardData }));
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        if (response.ok) {
+          this.dashboardData = await response.json();
+          window.dispatchEvent(
+            new CustomEvent("dashboardDataFetched", {
+              detail: this.dashboardData,
+            }),
+          );
         } else if (response.status === 401) {
-            localStorage.removeItem('auth_token');
-            window.location.href = 'login.html';
+          localStorage.removeItem("auth_token");
+          window.location.href = "login.html";
         }
       } catch (e) {
         console.error("Erro ao conectar na API:", e);
@@ -234,49 +253,140 @@ window.createAppShell = (pageKey) => ({
     }
   },
 
+  async fetchProdutos(page = 1, perPage = 50) {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/produtos?page=${page}&per_page=${perPage}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (!this.dashboardData) this.dashboardData = {};
+        this.dashboardData.produtos = data.data || [];
+        this.dashboardData.produtosTotal = data.total || 0;
+        this.dashboardData.produtosPage = page;
+        window.dispatchEvent(
+          new CustomEvent("produtosLoaded", { detail: this.dashboardData }),
+        );
+      } else if (response.status === 401) {
+        localStorage.removeItem("auth_token");
+        window.location.href = "login.html";
+      }
+    } catch (e) {
+      console.error("Erro ao buscar produtos:", e);
+      // Fallback com dados fictícios se API falhar
+      this.dashboardData.produtos = [
+        {
+          id: 1,
+          nome: "Notebook Dell Inspiron 15",
+          sku: "SKU-001",
+          categoria: "Eletrônicos",
+          quantidade: 45,
+          preco_unitario: 3500,
+          status: "OK",
+        },
+        {
+          id: 2,
+          nome: "Mouse Logitech MX Master",
+          sku: "SKU-002",
+          categoria: "Periféricos",
+          quantidade: 128,
+          preco_unitario: 280,
+          status: "OK",
+        },
+        {
+          id: 3,
+          nome: "Teclado Mecânico RGB",
+          sku: "SKU-003",
+          categoria: "Periféricos",
+          quantidade: 23,
+          preco_unitario: 450,
+          status: "Baixo",
+        },
+        {
+          id: 4,
+          nome: 'Monitor LG 27\" 4K',
+          sku: "SKU-004",
+          categoria: "Monitores",
+          quantidade: 18,
+          preco_unitario: 1800,
+          status: "OK",
+        },
+        {
+          id: 5,
+          nome: "Webcam HD 1080p",
+          sku: "SKU-005",
+          categoria: "Periféricos",
+          quantidade: 5,
+          preco_unitario: 320,
+          status: "Crítico",
+        },
+        {
+          id: 6,
+          nome: "Headphone Gamer",
+          sku: "SKU-006",
+          categoria: "Áudio",
+          quantidade: 67,
+          preco_unitario: 420,
+          status: "OK",
+        },
+      ];
+    }
+  },
+
   async realizarLogin(email, senha) {
     try {
-        const response = await fetch('http://localhost:8000/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({ email, senha })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem('auth_token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            alert('Login feito com sucesso!');
-            window.location.href = 'index.html';
-        } else {
-            alert(data.message || 'Erro ao fazer login.');
-        }
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        alert("Login feito com sucesso!");
+        window.location.href = "index.html";
+      } else {
+        alert(data.message || "Erro ao fazer login.");
+      }
     } catch (error) {
-        console.error('Erro na requisição', error);
-        alert('Erro de conexão com o servidor.');
+      console.error("Erro na requisição", error);
+      alert("Erro de conexão com o servidor.");
     }
   },
 
   async fazerLogout() {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-          try {
-              await fetch('http://localhost:8000/api/logout', {
-                  method: 'POST',
-                  headers: {
-                      'Accept': 'application/json',
-                      'Authorization': `Bearer ${token}`
-                  }
-              });
-          } catch (e) {
-              console.error('Erro ao fazer logout', e);
-          }
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      try {
+        await fetch("http://localhost:8000/api/logout", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (e) {
+        console.error("Erro ao fazer logout", e);
       }
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
-      window.location.href = 'login.html';
+    }
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
   },
 
   init() {
@@ -286,20 +396,23 @@ window.createAppShell = (pageKey) => ({
     this.$watch("darkMode", (value) => {
       localStorage.setItem("darkMode", JSON.stringify(value));
     });
-    
+
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-        try {
-            this.currentUser = JSON.parse(storedUser);
-        } catch (e) {
-            console.error("Erro ao fazer parse do usuário", e);
-        }
+      try {
+        this.currentUser = JSON.parse(storedUser);
+      } catch (e) {
+        console.error("Erro ao fazer parse do usuário", e);
+      }
     }
 
-    if (this.page !== 'login') {
+    if (this.page !== "login") {
       this.fetchNotificacoes();
-      if (this.page === 'profile') {
+      if (this.page === "profile") {
         this.fetchProfile();
+      } else if (this.page === "estoque") {
+        this.fetchDashboardData();
+        this.fetchProdutos();
       } else {
         this.fetchDashboardData();
       }

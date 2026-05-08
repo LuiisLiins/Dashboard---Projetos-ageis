@@ -33,15 +33,40 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Clientes</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Total de Clientes</span
+                  >
+                  <span
+                    class="bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.clientes_ativos)"></h4>
-                    <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12% este ano</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="formatNumber(dashboardData.kpis.clientes_ativos)"
+                    ></h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      >+12% este ano</span
+                    >
                   </div>
                 </div>
               </div>
@@ -50,15 +75,40 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Clientes Novos (Mês)</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Clientes Novos (Mês)</span
+                  >
+                  <span
+                    class="bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.novos_clientes)"></h4>
-                    <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+5% vs meta</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="formatNumber(dashboardData.kpis.novos_clientes)"
+                    ></h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      >+5% vs meta</span
+                    >
                   </div>
                 </div>
               </div>
@@ -67,23 +117,79 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <span
+                    class="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     Custo de Aquisição (CAC)
-                    <button @click.prevent="$dispatch('open-info-modal', { term: 'CAC (Custo de Aquisição de Clientes)', description: 'O investimento médio necessário em marketing e vendas para atrair e conquistar um novo cliente.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <button
+                      @click.prevent="$dispatch('open-info-modal', { term: 'CAC (Custo de Aquisição de Clientes)', description: 'O investimento médio necessário em marketing e vendas para atrair e conquistar um novo cliente.' })"
+                      class="hover:text-brand-500 text-gray-400 transition-colors"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
                     </button>
                   </span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  <span
+                    class="bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                      ></path>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.cac_medio, 2)"></span></h4>
-                    <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      R$
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.cac_medio, 2)"
+                      ></span>
+                    </h4>
+                    <span
+                      class="text-warning-500 mt-1 flex items-center gap-1 text-sm"
+                    >
                       LTV/CAC: 3.5x
-                      <button @click.prevent="$dispatch('open-info-modal', { term: 'LTV (Lifetime Value)', description: 'Valor do Ciclo de Vida. É a estimativa da receita média que um cliente gera ao longo de todo o tempo em que mantém relacionamento com a empresa.' })" class="text-gray-400 hover:text-warning-500 transition-colors">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                      <button
+                        @click.prevent="$dispatch('open-info-modal', { term: 'LTV (Lifetime Value)', description: 'Valor do Ciclo de Vida. É a estimativa da receita média que um cliente gera ao longo de todo o tempo em que mantém relacionamento com a empresa.' })"
+                        class="hover:text-warning-500 text-gray-400 transition-colors"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
                       </button>
                     </span>
                   </div>
@@ -94,20 +200,63 @@
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                  <span
+                    class="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     Churn Rate
-                    <button @click.prevent="$dispatch('open-info-modal', { term: 'Churn Rate (Taxa de Cancelamento)', description: 'Porcentagem de clientes que cancelaram o serviço ou deixaram de comprar em um determinado período.' })" class="text-gray-400 hover:text-brand-500 transition-colors">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <button
+                      @click.prevent="$dispatch('open-info-modal', { term: 'Churn Rate (Taxa de Cancelamento)', description: 'Porcentagem de clientes que cancelaram o serviço ou deixaram de comprar em um determinado período.' })"
+                      class="hover:text-brand-500 text-gray-400 transition-colors"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
                     </button>
                   </span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  <span
+                    class="bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                      ></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
                   </span>
                 </div>
                 <div class="mt-4 flex items-end justify-between">
                   <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90"><span x-text="formatNumber(dashboardData.kpis.churn_rate, 1)"></span>%</h4>
-                    <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">+0.5% este mês</span>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.churn_rate, 1)"
+                      ></span
+                      >%
+                    </h4>
+                    <span
+                      class="text-error-500 mt-1 flex items-center gap-1 text-sm text-red-500"
+                      >+0.5% este mês</span
+                    >
                   </div>
                 </div>
               </div>
@@ -126,7 +275,7 @@
                     </h3>
                   </div>
                 </div>
-                <div class="max-w-full overflow-x-auto custom-scrollbar">
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
                   <div id="chartThree" class="min-w-[400px]"></div>
                 </div>
               </div>
@@ -143,8 +292,438 @@
                     </h3>
                   </div>
                 </div>
-                <div class="max-w-full overflow-x-auto custom-scrollbar">
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
                   <div id="chartOne" class="min-w-[400px]"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-4">
+              <!-- Lista de Clientes -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      Lista de Clientes
+                    </h3>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Buscar clientes..."
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      @input="$dispatch('search-clientes', { query: $event.target.value })"
+                    />
+                  </div>
+                </div>
+
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Nome
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Email
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Telefone
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Status
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Data de Cadastro
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          João Silva
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          joao@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0001
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          15/01/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Pedro Oliveira
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          pedro@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0003
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          10/03/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Carlos Mendes
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          carlos@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0005
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Inativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          12/05/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Beatriz Lima
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          beatriz@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0006
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          22/04/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Fernando Gomes
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          fernando@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0007
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          01/05/2025
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
+                >
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Mostrando <span class="font-semibold">1</span> a
+                    <span class="font-semibold">5</span> de
+                    <span class="font-semibold">32</span> clientes
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('prev-page-clientes')"
+                    >
+                      ← Anterior
+                    </button>
+                    <div class="flex items-center gap-1">
+                      <button
+                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
+                      >
+                        1
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        2
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        3
+                      </button>
+                      <span class="px-2 text-gray-600 dark:text-gray-400"
+                        >...</span
+                      >
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        7
+                      </button>
+                    </div>
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('next-page-clientes')"
+                    >
+                      Próximo →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de Vendedores -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
+                    >
+                      Lista de Vendedores
+                    </h3>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Buscar vendedores..."
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      @input="$dispatch('search-vendedores', { query: $event.target.value })"
+                    />
+                  </div>
+                </div>
+
+                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Nome
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Email
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Telefone
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Status
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Data de Cadastro
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Maria Santos
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          maria@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0002
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          20/02/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Ana Costa
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          ana@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0004
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          05/04/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Roberto Alves
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          roberto@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0008
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          18/03/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Juliana Rocha
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          juliana@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0009
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Inativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          28/02/2025
+                        </td>
+                      </tr>
+                      <tr
+                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                      >
+                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
+                          Lucas Ferreira
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          lucas@example.com
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          (11) 99999-0010
+                        </td>
+                        <td class="px-4 py-3">
+                          <span
+                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
+                            >Ativo</span
+                          >
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+                          08/04/2025
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
+                >
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Mostrando <span class="font-semibold">1</span> a
+                    <span class="font-semibold">5</span> de
+                    <span class="font-semibold">15</span> vendedores
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('prev-page-vendedores')"
+                    >
+                      ← Anterior
+                    </button>
+                    <div class="flex items-center gap-1">
+                      <button
+                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
+                      >
+                        1
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        2
+                      </button>
+                      <button
+                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >
+                        3
+                      </button>
+                    </div>
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      @click="$dispatch('next-page-vendedores')"
+                    >
+                      Próximo →
+                    </button>
+                  </div>
                 </div>
               </div>
             </section>
