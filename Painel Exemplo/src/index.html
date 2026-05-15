@@ -18,161 +18,273 @@
     <div class="flex h-screen overflow-hidden">
       <include src="./partials/sidebar.html"></include>
 
-      <div
-        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
-      >
+      <div class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
         <include src="./partials/overlay.html" />
         <include src="./partials/header.html" />
 
-        <main>
+        <main x-data="{
+          activeTab: 'todos',
+          inboxItems: [],
+          activityFeed: [],
+          init() {
+            this.fetchNotificacoes();
+            this.fetchAtividades();
+          },
+          async fetchNotificacoes() {
+            try {
+              const res = await fetch('http://localhost:8000/api/notificacoes');
+              const data = await res.json();
+              this.inboxItems = data.map(n => {
+                let icon, color, bg, tab;
+                if (n.tipo === 'aprovacao' || n.tipo === 'approval') {
+                  icon = 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+                  color = 'text-success-500'; bg = 'bg-success-50 dark:bg-success-500/10'; tab = 'aprovacoes';
+                } else if (n.tipo === 'alerta' || n.tipo === 'alert') {
+                  icon = 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z';
+                  color = 'text-error-500'; bg = 'bg-error-50 dark:bg-error-500/10'; tab = 'alertas';
+                } else {
+                  icon = 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z';
+                  color = 'text-blue-500'; bg = 'bg-blue-50 dark:bg-blue-500/10'; tab = 'tarefas';
+                }
+                return {
+                  id: n.id,
+                  type: (n.tipo === 'aprovacao' || n.tipo === 'approval') ? 'approval' : ((n.tipo === 'alerta' || n.tipo === 'alert') ? 'alert' : 'task'),
+                  tab: tab,
+                  title: n.titulo,
+                  desc: n.mensagem,
+                  time: new Date(n.created_at).toLocaleDateString('pt-BR'),
+                  icon: icon,
+                  color: color,
+                  bg: bg
+                };
+              });
+            } catch (error) {
+              console.error('Erro ao buscar notificações:', error);
+            }
+          },
+          async fetchAtividades() {
+            try {
+              const res = await fetch('http://localhost:8000/api/atividades');
+              const data = await res.json();
+              this.activityFeed = data.map(a => ({
+                id: a.id,
+                user: a.usuario_nome,
+                action: a.acao,
+                target: a.alvo,
+                time: new Date(a.created_at).toLocaleDateString('pt-BR'),
+                avatar: a.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(a.usuario_nome)}&background=random`
+              }));
+            } catch (error) {
+              console.error('Erro ao buscar atividades:', error);
+            }
+          },
+          get filteredItems() {
+            if (this.activeTab === 'todos') return this.inboxItems;
+            return this.inboxItems.filter(item => item.tab === this.activeTab);
+          },
+          async markAsDone(id) {
+            try {
+              await fetch(`http://localhost:8000/api/notificacoes/${id}/ler`, { method: 'PUT' });
+              this.inboxItems = this.inboxItems.filter(i => i.id !== id);
+            } catch (error) {
+              console.error('Erro ao marcar como lida:', error);
+            }
+          }
+        }">     }
+        }">
           <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
-            <include src="./partials/dashboard/page-header.html"></include>
-
-            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Receita do mês</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                  </span>
-                </div>
-                <div class="mt-4 flex items-end justify-between">
-                  <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.receita_total, 2)"></span></h4>
-                    <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+12.5% em relação ao mês anterior</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Vendas</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                  </span>
-                </div>
-                <div class="mt-4 flex items-end justify-between">
-                  <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.quantidade_vendas)"></h4>
-                    <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+4.2% em relação ao mês anterior</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Clientes Novos</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                  </span>
-                </div>
-                <div class="mt-4 flex items-end justify-between">
-                  <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.novos_clientes)"></h4>
-                    <span class="text-sm text-warning-500 mt-1 flex items-center gap-1">-1.5% em relação ao mês anterior</span>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
-              >
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Contas Pendentes</span>
-                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  </span>
-                </div>
-                <div class="mt-4 flex items-end justify-between">
-                  <div>
-                    <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="formatNumber(dashboardData.kpis.titulos_pendentes)"></h4>
-                    <span class="text-sm text-error-500 mt-1 flex items-center gap-1 text-red-500">R$ 12.450 a vencer hoje</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section class="mt-6 grid gap-4 xl:grid-cols-3">
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 xl:col-span-2 dark:border-gray-800 dark:bg-white/[0.03]"
-              >
-                <div class="mb-4 flex items-center justify-between">
-                  <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Evolução de Receita
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Crescimento de faturamento mês a mês.
-                    </p>
-                  </div>
-                </div>
-                <div class="max-w-full overflow-x-auto custom-scrollbar">
-                  <div id="chartThree" class="min-w-[700px]"></div>
-                </div>
-              </div>
-
-              <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] flex flex-col"
-              >
-                <h3
-                  class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                >
-                  Alertas
-                </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  Situações que exigem atenção imediata.
+            
+            <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">
+                  Hub de Ações
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  Sua caixa de entrada gerencial: pendências, aprovações e atividades.
                 </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-400">
+                  4 Novidades
+                </span>
+              </div>
+            </div>
 
-                <div class="space-y-4 flex-1">
-                  <div class="rounded-xl border-l-4 border-error-500 bg-error-50 p-4 dark:bg-error-500/10">
-                    <div class="flex items-center gap-3">
-                      <span class="text-error-500">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                      </span>
-                      <div>
-                        <h4 class="text-sm font-semibold text-gray-800 dark:text-white/90">Estoque Crítico</h4>
-                        <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">Produto XYZ com menos de 10 unidades.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="rounded-xl border-l-4 border-warning-500 bg-warning-50 p-4 dark:bg-warning-500/10">
-                    <div class="flex items-center gap-3">
-                      <span class="text-warning-500">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                      </span>
-                      <div>
-                        <h4 class="text-sm font-semibold text-gray-800 dark:text-white/90">Inadimplência</h4>
-                        <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">2 faturas em aberto há mais de 15 dias.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="rounded-xl border-l-4 border-brand-500 bg-brand-50 p-4 dark:bg-brand-500/10">
-                    <div class="flex items-center gap-3">
-                      <span class="text-brand-500">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                      </span>
-                      <div>
-                        <h4 class="text-sm font-semibold text-gray-800 dark:text-white/90">Atraso na Produção</h4>
-                        <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">Linha de produção B com 1h de atraso.</p>
-                      </div>
-                    </div>
-                  </div>
+            <!-- KPIs Compactos -->
+            <section class="grid gap-4 md:grid-cols-4 mb-6">
+              <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03] flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Receita Mês</p>
+                  <h4 class="mt-1 text-xl font-bold text-gray-800 dark:text-white/90">R$ <span x-text="formatNumber(dashboardData.kpis.receita_total, 2)">450.250,50</span></h4>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+              </div>
+              <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03] flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Novos Clientes</p>
+                  <h4 class="mt-1 text-xl font-bold text-gray-800 dark:text-white/90">142</h4>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                </div>
+              </div>
+              <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03] flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Vendas do Dia</p>
+                  <h4 class="mt-1 text-xl font-bold text-gray-800 dark:text-white/90">24</h4>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </div>
+              </div>
+              <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03] flex items-center justify-between hover:shadow-md transition-shadow">
+                <div>
+                  <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Alertas Ativos</p>
+                  <h4 class="mt-1 text-xl font-bold text-error-600 dark:text-error-400">3</h4>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 </div>
               </div>
             </section>
+
+            <!-- Main Hub Area: Inbox & Feed -->
+            <section class="grid gap-6 xl:grid-cols-3">
+              
+              <!-- Inbox Central -->
+              <div class="rounded-2xl border border-gray-200 bg-white shadow-sm xl:col-span-2 dark:border-gray-800 dark:bg-gray-900 flex flex-col h-[600px]">
+                
+                <!-- Inbox Header / Tabs -->
+                <div class="border-b border-gray-200 dark:border-gray-800 px-5 pt-5 pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Sua Caixa de Entrada</h3>
+                  
+                  <nav class="flex space-x-4">
+                    <button @click="activeTab = 'todos'" :class="activeTab === 'todos' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition-colors">
+                      Todos
+                    </button>
+                    <button @click="activeTab = 'aprovacoes'" :class="activeTab === 'aprovacoes' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition-colors flex items-center gap-1.5">
+                      Aprovações
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-brand-100 text-[10px] font-bold text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">2</span>
+                    </button>
+                    <button @click="activeTab = 'alertas'" :class="activeTab === 'alertas' ? 'border-error-500 text-error-600 dark:text-error-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition-colors flex items-center gap-1.5">
+                      Alertas
+                      <span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-error-100 text-[10px] font-bold text-error-700 dark:bg-error-500/20 dark:text-error-300">1</span>
+                    </button>
+                    <button @click="activeTab = 'tarefas'" :class="activeTab === 'tarefas' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 px-1 text-sm font-medium transition-colors">
+                      Tarefas
+                    </button>
+                  </nav>
+                </div>
+
+                <!-- Inbox Items List -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
+                  
+                  <template x-if="filteredItems.length === 0">
+                    <div class="flex h-full flex-col items-center justify-center text-center p-8">
+                      <div class="rounded-full bg-gray-50 p-4 dark:bg-gray-800 mb-3">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-gray-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                      </div>
+                      <h4 class="text-base font-medium text-gray-800 dark:text-white/90">Tudo limpo por aqui!</h4>
+                      <p class="text-sm text-gray-500 mt-1">Nenhum item pendente nesta categoria.</p>
+                    </div>
+                  </template>
+
+                  <div class="space-y-1">
+                    <template x-for="item in filteredItems" :key="item.id">
+                      <div class="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700/50">
+                        <div class="flex items-start gap-4">
+                          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full mt-0.5" :class="item.bg + ' ' + item.color">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" x-html="`<path stroke-linecap='round' stroke-linejoin='round' d='${item.icon}'></path>`"></svg>
+                          </div>
+                          <div>
+                            <div class="flex items-center gap-2 mb-1">
+                              <h4 class="text-sm font-semibold text-gray-800 dark:text-white/90" x-text="item.title"></h4>
+                              <span class="text-[11px] text-gray-400" x-text="item.time"></span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-1" x-text="item.desc"></p>
+                          </div>
+                        </div>
+                        
+                        <!-- Actions Container (Visible on hover in desktop, always in mobile) -->
+                        <div class="flex items-center gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity self-end sm:self-auto shrink-0">
+                          <template x-if="item.type === 'approval'">
+                            <div class="flex gap-2">
+                              <button @click="markAsDone(item.id)" class="rounded-lg bg-success-50 p-2 text-success-600 hover:bg-success-100 dark:bg-success-500/10 dark:text-success-400 dark:hover:bg-success-500/20 transition-colors" title="Aprovar">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                              </button>
+                              <button @click="markAsDone(item.id)" class="rounded-lg bg-error-50 p-2 text-error-600 hover:bg-error-100 dark:bg-error-500/10 dark:text-error-400 dark:hover:bg-error-500/20 transition-colors" title="Rejeitar">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                              </button>
+                            </div>
+                          </template>
+                          
+                          <template x-if="item.type !== 'approval'">
+                            <button @click="markAsDone(item.id)" class="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+                              Marcar como Lida
+                            </button>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="border-t border-gray-100 dark:border-gray-800 p-3 text-center">
+                  <a href="#" class="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-brand-400">Ver Arquivo Antigo</a>
+                </div>
+              </div>
+
+              <!-- Activity Feed Sidebar -->
+              <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900 h-[600px] flex flex-col">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90 mb-5">Atividades Recentes</h3>
+                
+                <div class="relative flex-1 overflow-y-auto custom-scrollbar pr-2">
+                  <!-- Timeline Line -->
+                  <div class="absolute left-4 top-0 h-full w-px bg-gray-200 dark:bg-gray-800"></div>
+                  
+                  <div class="space-y-6">
+                    <template x-for="activity in activityFeed" :key="activity.id">
+                      <div class="relative flex gap-4">
+                        <img :src="activity.avatar" class="relative z-10 h-8 w-8 rounded-full border-2 border-white dark:border-gray-900" alt="Avatar">
+                        <div class="flex-1 pb-1">
+                          <p class="text-sm text-gray-800 dark:text-white/90">
+                            <span class="font-semibold" x-text="activity.user"></span>
+                            <span class="text-gray-500 dark:text-gray-400" x-text="activity.action"></span>
+                            <span class="font-medium text-brand-600 dark:text-brand-400" x-text="activity.target"></span>
+                          </p>
+                          <span class="mt-1 block text-xs text-gray-400" x-text="activity.time"></span>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                
+                <button class="mt-4 w-full rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+                  Carregar Mais
+                </button>
+              </div>
+
+            </section>
+            
+            <!-- Reference Chart Container -->
+            <section class="mt-6">
+              <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="mb-4 flex items-center justify-between">
+                  <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">Visão Geral de Receita (Mês Atual)</h3>
+                </div>
+                <div class="max-w-full overflow-x-auto custom-scrollbar h-[250px]">
+                  <div id="chartThree" class="min-w-[700px] -mt-4"></div>
+                </div>
+              </div>
+            </section>
+
           </div>
         </main>
       </div>
     </div>
+
+    <include src="./partials/ai-chat.html"></include>
   </body>
 </html>

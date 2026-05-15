@@ -232,6 +232,24 @@
               </span>
             </a>
           </li>
+          <li>
+            <a
+              href="metas.html"
+              class="menu-item group"
+              :class="page === 'metas' ? 'menu-item-active' : 'menu-item-inactive'"
+            >
+              <span
+                class="flex h-6 w-6 items-center justify-center"
+                x-html="$store.navigation.getIcon('target', page === 'metas' ? 'menu-item-icon-active' : 'menu-item-icon-inactive')"
+              ></span>
+              <span
+                class="menu-item-text"
+                :class="sidebarToggle ? 'lg:hidden' : ''"
+              >
+                Metas e OKRs
+              </span>
+            </a>
+          </li>
         </ul>
       </div>
 

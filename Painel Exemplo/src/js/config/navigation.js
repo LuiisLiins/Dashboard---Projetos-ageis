@@ -34,6 +34,13 @@ const iconMap = {
       <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 19C3.25 18.5858 3.58579 18.25 4 18.25H20C20.4142 18.25 20.75 18.5858 20.75 19C20.75 19.4142 20.4142 19.75 20 19.75H4C3.58579 19.75 3.25 19.4142 3.25 19ZM6.25 14C6.25 13.5858 6.58579 13.25 7 13.25C7.41421 13.25 7.75 13.5858 7.75 14V19C7.75 19.4142 7.41421 19.75 7 19.75C6.58579 19.75 6.25 19.4142 6.25 19V14ZM11.75 10V19C11.75 19.4142 11.4142 19.75 11 19.75C10.5858 19.75 10.25 19.4142 10.25 19V10C10.25 9.58579 10.5858 9.25 11 9.25C11.4142 9.25 11.75 9.58579 11.75 10ZM16.75 5V19C16.75 19.4142 16.4142 19.75 16 19.75C15.5858 19.75 15.25 19.4142 15.25 19V5C15.25 4.58579 15.5858 4.25 16 4.25C16.4142 4.25 16.75 4.58579 16.75 5ZM18.5303 3.96967C18.8232 4.26256 18.8232 4.73744 18.5303 5.03033L16.5303 7.03033C16.2374 7.32322 15.7626 7.32322 15.4697 7.03033L13.75 5.31066L11.53 7.53C11.2371 7.82289 10.7623 7.82289 10.4694 7.53C10.1765 7.23711 10.1765 6.76223 10.4694 6.46934L13.22 3.71868C13.5129 3.42579 13.9878 3.42579 14.2807 3.71868L16 5.43934L17.4697 3.96967C17.7626 3.67678 18.2374 3.67678 18.5303 3.96967Z" fill="currentColor"/>
     </svg>
   `,
+  target: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="12" r="6"></circle>
+      <circle cx="12" cy="12" r="2"></circle>
+    </svg>
+  `,
 };
 
 export const navigationGroups = [
@@ -78,6 +85,12 @@ export const navigationGroups = [
     label: "Previsão",
     icon: "forecast",
     href: "previsao.html",
+  },
+  {
+    key: "metas",
+    label: "Metas e OKRs",
+    icon: "target",
+    href: "metas.html",
   },
 ];
 
@@ -289,6 +302,22 @@ export const pageCatalog = {
     cadence: "Intradia e diario",
     badgeClass:
       "bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
+  },
+  "metas": {
+    href: "metas.html",
+    groupKey: "metas",
+    groupLabel: "Metas",
+    title: "Gestão de Metas",
+    navLabel: "Metas",
+    domainLabel: "Estratégico",
+    description: "Acompanhe e trace novas metas para a equipe e a empresa.",
+    focus: "Metas e Resultados Chave",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Visão consolidada do atingimento de metas para alinhamento estratégico.",
+    audience: "Diretoria e Gestores",
+    cadence: "Mensal e Trimestral",
+    badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
   },
 };
 

@@ -13,6 +13,7 @@
     x-data="{
       ...createAppShell('estoque'),
       selectedProducts: [],
+      showComparison: false,
       toggleAllProducts() {
         const allIds = (this.dashboardData.produtos || []).map(p => p.id);
         this.selectedProducts.length === allIds.length ? this.selectedProducts = [] : this.selectedProducts = allIds;
@@ -21,10 +22,10 @@
         this.selectedProducts.includes(id) ? this.selectedProducts = this.selectedProducts.filter(p => p !== id) : this.selectedProducts.push(id);
       },
       compareProducts() {
-        if (this.selectedProducts.length === 0) { alert('Selecione pelo menos 1 produto'); return; }
-        window.dispatchEvent(new CustomEvent('open-compare-modal', { detail: { productIds: [...this.selectedProducts] } }));
+        this.showComparison = !this.showComparison;
       }
     }"
+    x-init="init()"
     :class="{'dark bg-gray-900': darkMode === true}"
   >
     <include src="./partials/preloader.html"></include>
@@ -76,12 +77,8 @@
                   <div>
                     <h4
                       class="text-2xl font-bold text-gray-800 dark:text-white/90"
-                    >
-                      R$
-                      <span
-                        x-text="formatNumber(dashboardData.kpis.valor_estoque, 2)"
-                      ></span>
-                    </h4>
+                      x-text="dashboardData.kpis.valor_estoque?.formatado || 'R$ 0,00'"
+                    ></h4>
                     <span
                       class="mt-1 flex items-center gap-1 text-sm text-gray-500"
                       >Em 12.500 itens</span
@@ -121,16 +118,12 @@
                   <div>
                     <h4
                       class="text-2xl font-bold text-gray-800 dark:text-white/90"
-                    >
-                      <span
-                        x-text="formatNumber(dashboardData.kpis.giro_estoque, 1)"
-                      ></span
-                      >x
-                    </h4>
+                      x-text="dashboardData.kpis.giro_estoque?.formatado || '0,0x'"
+                    ></h4>
                     <span
                       class="text-success-500 mt-1 flex items-center gap-1 text-sm"
-                      >Acima da média</span
-                    >
+                      x-text="dashboardData.kpis.giro_estoque?.status || 'Acima da média'"
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -166,16 +159,12 @@
                   <div>
                     <h4
                       class="text-2xl font-bold text-gray-800 dark:text-white/90"
-                    >
-                      <span
-                        x-text="formatNumber(dashboardData.kpis.risco_ruptura)"
-                      ></span>
-                      Itens
-                    </h4>
+                      x-text="dashboardData.kpis.risco_ruptura?.formatado || '0 itens'"
+                    ></h4>
                     <span
                       class="text-error-500 mt-1 flex items-center gap-1 text-sm text-red-500"
-                      >Baixo estoque</span
-                    >
+                      x-text="dashboardData.kpis.risco_ruptura?.status || 'Baixo estoque'"
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -208,16 +197,12 @@
                   <div>
                     <h4
                       class="text-2xl font-bold text-gray-800 dark:text-white/90"
-                    >
-                      <span
-                        x-text="formatNumber(dashboardData.kpis.prazo_medio_reposicao)"
-                      ></span>
-                      Dias
-                    </h4>
+                      x-text="dashboardData.kpis.prazo_medio_reposicao?.formatado || '0 dias'"
+                    ></h4>
                     <span
                       class="text-warning-500 mt-1 flex items-center gap-1 text-sm"
-                      >Atraso em 3 ped.</span
-                    >
+                      x-text="dashboardData.kpis.prazo_medio_reposicao?.status || 'Atraso em 3 ped.'"
+                    ></span>
                   </div>
                 </div>
               </div>
@@ -306,14 +291,16 @@
                     @click="compareProducts"
                     class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
                   >
-                    Comparar
+                    <span
+                      x-text="showComparison ? 'Fechar Comparação' : 'Comparar Produtos'"
+                    ></span>
                     <span
                       class="font-bold"
                       x-text="'(' + selectedProducts.length + ')'"
                     ></span>
                   </button>
                   <button
-                    @click="selectedProducts = []"
+                    @click="selectedProducts = []; showComparison = false"
                     class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Limpar Seleção
@@ -499,11 +486,118 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Comparação de Produtos -->
+              <div
+                x-show="showComparison && selectedProducts.length > 0"
+                class="mt-8 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <h3
+                  class="mb-4 text-lg font-semibold text-gray-900 dark:text-white"
+                >
+                  Comparação:
+                  <span x-text="selectedProducts.length"></span> Produto(s)
+                </h3>
+
+                <div class="overflow-x-auto">
+                  <div
+                    class="grid gap-4"
+                    :class="selectedProducts.length === 1 ? 'grid-cols-1' : selectedProducts.length === 2 ? 'grid-cols-2' : 'grid-cols-3 xl:grid-cols-4'"
+                  >
+                    <template
+                      x-for="productId in selectedProducts"
+                      :key="productId"
+                    >
+                      <div
+                        class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <template x-if="dashboardData.produtos">
+                          <template
+                            x-for="product in dashboardData.produtos.filter(p => p.id === productId)"
+                            :key="product.id"
+                          >
+                            <div>
+                              <h4
+                                class="mb-2 font-bold text-gray-900 dark:text-white"
+                                x-text="product.nome"
+                              ></h4>
+
+                              <div class="space-y-2 text-sm">
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    SKU
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                    x-text="product.sku"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Categoria
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                    x-text="product.categoria"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Quantidade
+                                  </p>
+                                  <p
+                                    class="text-lg font-bold text-gray-900 dark:text-white"
+                                    x-text="product.quantidade"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Preço Unit.
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                  >
+                                    R$
+                                    <span
+                                      x-text="formatNumber(product.preco_unitario, 2)"
+                                    ></span>
+                                  </p>
+                                </div>
+                                <div
+                                  class="border-t border-gray-200 pt-2 dark:border-gray-700"
+                                >
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Valor Total
+                                  </p>
+                                  <p
+                                    class="text-brand-600 dark:text-brand-400 text-lg font-bold"
+                                  >
+                                    R$
+                                    <span
+                                      x-text="formatNumber(product.quantidade * product.preco_unitario, 2)"
+                                    ></span>
+                                  </p>
+                                </div>
+                                <div>
+                                  <span
+                                    :class="product.status === 'OK' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : product.status === 'Baixo' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300'"
+                                    class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                                    x-text="product.status"
+                                  ></span>
+                                </div>
+                              </div>
+                            </div>
+                          </template>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
         </main>
       </div>
     </div>
-    <include src="./partials/compare-modal.html"></include>
   </body>
 </html>

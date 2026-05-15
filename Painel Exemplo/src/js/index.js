@@ -95,7 +95,36 @@ window.createAppShell = (pageKey) => ({
   sidebarToggle: false,
   scrollTop: false,
 
-  dashboardData: { kpis: {}, charts: {} },
+  dashboardData: {
+    kpis: {
+      taxa_crescimento: 12.5,
+      concluidos_hoje: 0,
+      valor_estoque: {
+        valor: 450250.5,
+        formatado: "R$ 450.250,50",
+        tipo: "moeda",
+      },
+      giro_estoque: {
+        valor: 4.5,
+        formatado: "4,5x",
+        status: "Acima da média",
+        tipo: "decimal",
+      },
+      risco_ruptura: {
+        valor: 23,
+        formatado: "23 itens",
+        status: "Baixo estoque",
+        tipo: "inteiro",
+      },
+      prazo_medio_reposicao: {
+        valor: 7,
+        formatado: "7 dias",
+        status: "Normal",
+        tipo: "inteiro",
+      },
+    },
+    charts: {},
+  },
   profileData: { id: "", nome: "", email: "", senha: "", perfil_acesso_id: "" },
   currentUser: {},
   notificacoes: [],
@@ -237,7 +266,20 @@ window.createAppShell = (pageKey) => ({
           },
         );
         if (response.ok) {
-          this.dashboardData = await response.json();
+          const data = await response.json();
+          // Merge com valores padrão para evitar campos vazios
+          this.dashboardData = {
+            ...this.dashboardData,
+            ...data,
+            kpis: {
+              ...this.dashboardData.kpis,
+              ...(data.kpis || {}),
+            },
+            charts: {
+              ...this.dashboardData.charts,
+              ...(data.charts || {}),
+            },
+          };
           window.dispatchEvent(
             new CustomEvent("dashboardDataFetched", {
               detail: this.dashboardData,
@@ -423,6 +465,69 @@ window.createAppShell = (pageKey) => ({
 Alpine.plugin(persist);
 window.Alpine = Alpine;
 Alpine.store("navigation", createNavigationStore());
+
+window.aiChat = () => ({
+  isOpen: false,
+  isLoading: false,
+  userInput: '',
+  messages: [],
+  
+  toggleChat() {
+    this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      setTimeout(() => {
+        const input = document.querySelector('input[placeholder="Pergunte sobre as vendas..."]');
+        if (input) input.focus();
+      }, 100);
+    }
+  },
+  
+  async sendMessage() {
+    if (!this.userInput.trim() || this.isLoading) return;
+    
+    const message = this.userInput.trim();
+    this.messages.push({ role: 'user', content: message });
+    this.userInput = '';
+    this.isLoading = true;
+    
+    this.scrollToBottom();
+    
+    // Mock response for frontend visual demonstration
+    setTimeout(() => {
+      let mockReply = 'Desculpe, eu não entendi.';
+      const lowerMessage = message.toLowerCase();
+      
+      if (lowerMessage.includes('venda') || lowerMessage.includes('faturamento')) {
+        mockReply = 'As vendas deste mês estão **12.5% maiores** em relação ao mês anterior. O faturamento total foi de **R$ 450.250,50** com um total de 342 vendas concluídas.';
+      } else if (lowerMessage.includes('estoque') || lowerMessage.includes('produto')) {
+        mockReply = 'Temos **23 itens** com estoque crítico (abaixo da margem de segurança). O item mais crítico no momento é a Webcam HD 1080p, com apenas 5 unidades restantes.';
+      } else if (lowerMessage.includes('ola') || lowerMessage.includes('olá') || lowerMessage.includes('oi')) {
+        mockReply = 'Olá! Tudo ótimo por aqui. Como posso ajudar com os dados de hoje?';
+      } else {
+        mockReply = 'Com base nos dados atuais, as métricas parecem estáveis. Para acessar relatórios completos, veja a aba "Estratégico". Posso ajudar com mais detalhes sobre um KPI específico?';
+      }
+      
+      this.messages.push({ role: 'assistant', content: mockReply });
+      this.isLoading = false;
+      this.scrollToBottom();
+    }, 1500);
+  },
+  
+  scrollToBottom() {
+    setTimeout(() => {
+      const container = document.getElementById('chat-messages');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }, 50);
+  },
+  
+  formatMessage(text) {
+    // Simple markdown to HTML for bold text
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }
+});
+
 Alpine.start();
 
 // Init flatpickr

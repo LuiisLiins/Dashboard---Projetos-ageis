@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gestão de Metas | Dashboard Multidominio</title>
+  </head>
+  <body
+    x-data="{
+      ...createAppShell('metas'),
+      isModalOpen: false,
+      newGoal: { title: '', category: 'financeiro', target: '', deadline: '' },
+      goals: [],
+      init() {
+        this.fetchGoals();
+      },
+      async fetchGoals() {
+        try {
+          const res = await fetch('http://localhost:8000/api/metas');
+          const data = await res.json();
+          this.goals = data.map(g => ({
+            id: g.id,
+            title: g.titulo,
+            category: g.categoria.charAt(0).toUpperCase() + g.categoria.slice(1),
+            progress: g.progresso,
+            target: g.valor_alvo,
+            current: g.valor_atual,
+            status: g.status,
+            deadline: new Date(g.data_limite).toLocaleDateString('pt-BR')
+          }));
+        } catch (error) {
+          console.error('Erro ao buscar metas:', error);
+        }
+      },
+      async saveGoal() {
+        if(!this.newGoal.title) return;
+        
+        try {
+          const res = await fetch('http://localhost:8000/api/metas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              titulo: this.newGoal.title,
+              categoria: this.newGoal.category,
+              valor_alvo: this.newGoal.target || 'A definir',
+              data_limite: this.newGoal.deadline,
+              valor_atual: '0',
+              status: 'on-track',
+              progresso: 0
+            })
+          });
+
+          if (res.ok) {
+            await this.fetchGoals();
+            this.isModalOpen = false;
+            this.newGoal = { title: '', category: 'financeiro', target: '', deadline: '' };
+            alert('Meta traçada com sucesso!');
+          } else {
+            alert('Erro ao salvar meta.');
+          }
+        } catch (error) {
+          console.error('Erro:', error);
+        }
+      }
+    }"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <include src="./partials/preloader.html"></include>
+
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            
+            <!-- Custom Page Header for Goals -->
+            <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">
+                  Gestão de Metas e OKRs
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  Acompanhe e trace novas metas para a equipe e a empresa.
+                </p>
+              </div>
+              <div>
+                <button 
+                  @click="isModalOpen = true"
+                  class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Traçar Nova Meta
+                </button>
+              </div>
+            </div>
+
+            <!-- Summary Section -->
+            <section class="grid gap-4 md:grid-cols-3 mb-6">
+              <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Metas Ativas</span>
+                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  </span>
+                </div>
+                <div class="mt-4">
+                  <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="goals.length">4</h4>
+                  <span class="text-sm text-success-500 mt-1 flex items-center gap-1">+1 neste mês</span>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Taxa de Conclusão</span>
+                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  </span>
+                </div>
+                <div class="mt-4">
+                  <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">25%</h4>
+                  <div class="mt-2 h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800">
+                    <div class="h-1.5 rounded-full bg-success-500" style="width: 25%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Em Risco</span>
+                  <span class="flex h-8 w-8 items-center justify-center rounded-full bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </div>
+                <div class="mt-4">
+                  <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90" x-text="goals.filter(g => g.status === 'at-risk').length">1</h4>
+                  <span class="text-sm text-error-500 mt-1 flex items-center gap-1">Atenção necessária</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Goals List -->
+            <section class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">Acompanhamento de Metas</h3>
+              
+              <div class="grid gap-4 md:grid-cols-2">
+                <template x-for="goal in goals" :key="goal.id">
+                  <div class="rounded-xl border border-gray-100 bg-gray-50 p-5 dark:border-gray-800/50 dark:bg-gray-800/20 hover:border-brand-300 dark:hover:border-brand-700 transition-colors">
+                    
+                    <div class="flex justify-between items-start mb-4">
+                      <div>
+                        <span class="inline-flex items-center rounded-full bg-brand-50 px-2 py-1 text-xs font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-400 mb-2" x-text="goal.category"></span>
+                        <h4 class="text-md font-semibold text-gray-800 dark:text-white/90" x-text="goal.title"></h4>
+                      </div>
+                      
+                      <!-- Status Badge -->
+                      <span x-show="goal.status === 'on-track'" class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">No Prazo</span>
+                      <span x-show="goal.status === 'at-risk'" class="inline-flex items-center rounded-full bg-error-50 px-2.5 py-0.5 text-xs font-medium text-error-700 dark:bg-error-500/10 dark:text-error-400">Em Risco</span>
+                      <span x-show="goal.status === 'completed'" class="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-medium text-success-700 dark:bg-success-500/10 dark:text-success-400">Concluído</span>
+                    </div>
+
+                    <div class="mb-2 flex items-center justify-between text-sm">
+                      <span class="text-gray-500 dark:text-gray-400">Progresso</span>
+                      <span class="font-medium text-gray-800 dark:text-white/90" x-text="goal.progress + '%'"></span>
+                    </div>
+                    
+                    <div class="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700 mb-4 overflow-hidden">
+                      <div class="h-2.5 rounded-full transition-all duration-500" 
+                           :class="{
+                             'bg-brand-500': goal.status === 'on-track',
+                             'bg-error-500': goal.status === 'at-risk',
+                             'bg-success-500': goal.status === 'completed'
+                           }"
+                           :style="`width: ${goal.progress}%`"></div>
+                    </div>
+
+                    <div class="flex justify-between items-end border-t border-gray-200 dark:border-gray-700 pt-3 mt-4">
+                      <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Atual / Alvo</p>
+                        <p class="text-sm font-semibold text-gray-800 dark:text-white/90"><span x-text="goal.current"></span> <span class="text-gray-400 font-normal">/</span> <span x-text="goal.target"></span></p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Prazo</p>
+                        <p class="text-sm font-medium text-gray-800 dark:text-white/90 flex items-center gap-1">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                          <span x-text="goal.deadline"></span>
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+                </template>
+              </div>
+            </section>
+
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <include src="./partials/ai-chat.html"></include>
+
+    <!-- Modal: Nova Meta -->
+    <div x-show="isModalOpen" style="display: none;" class="fixed inset-0 z-[99] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4">
+      <div 
+        @click.outside="isModalOpen = false"
+        x-show="isModalOpen" 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800"
+      >
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white/90">Traçar Nova Meta</h3>
+          <button @click="isModalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="saveGoal()">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da Meta</label>
+              <input x-model="newGoal.title" type="text" placeholder="Ex: Aumentar vendas em 15%" class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:text-white" required>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+                <select x-model="newGoal.category" class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:text-white dark:bg-gray-800">
+                  <option value="financeiro">Financeiro</option>
+                  <option value="comercial">Comercial</option>
+                  <option value="estoque">Estoque</option>
+                  <option value="operacional">Operacional</option>
+                </select>
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Data Limite</label>
+                <input x-model="newGoal.deadline" type="date" class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:text-white">
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Valor Alvo (Target)</label>
+              <input x-model="newGoal.target" type="text" placeholder="Ex: R$ 1.000.000 ou 150 itens" class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:text-white">
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end gap-3">
+            <button type="button" @click="isModalOpen = false" class="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
+              Cancelar
+            </button>
+            <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600">
+              Salvar Meta
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </body>
+</html>
