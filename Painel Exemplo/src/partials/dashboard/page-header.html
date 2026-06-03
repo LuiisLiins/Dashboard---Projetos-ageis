@@ -1,84 +1,49 @@
-<div class="mb-6 space-y-4">
+<div class="mb-6">
   <include src="../breadcrumb.html"></include>
 
-  <section
-    class="rounded-2xl border border-gray-200 bg-white px-5 py-5 sm:px-6 dark:border-gray-800 dark:bg-white/[0.03]"
-  >
-    <div
-      class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
-    >
-      <div class="max-w-3xl space-y-3">
+  <div class="mt-3 flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-5 py-4 dark:border-gray-800 dark:bg-white/[0.03] sm:flex-row sm:items-center sm:justify-between">
+
+    <!-- Esquerda: badge + título + descrição -->
+    <div class="flex items-start gap-3">
+      <div class="mt-0.5 h-full w-1 self-stretch rounded-full bg-brand-500 dark:bg-brand-400 shrink-0"></div>
+      <div>
         <span
-          class="inline-flex rounded-full px-3 py-1 text-xs font-semibold tracking-[0.16em] uppercase"
+          class="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em]"
           :class="$store.navigation.getPageMeta(page).badgeClass"
           x-text="$store.navigation.getPageMeta(page).domainLabel"
         ></span>
-
-        <div>
-          <h1
-            class="text-2xl font-semibold text-gray-800 sm:text-3xl dark:text-white/90"
-            x-text="$store.navigation.getPageMeta(page).title"
-          ></h1>
-          <p
-            class="mt-2 text-sm leading-6 text-gray-500 sm:text-base dark:text-gray-400"
-            x-text="$store.navigation.getPageMeta(page).description"
-          ></p>
-        </div>
-      </div>
-
-      <div class="grid gap-3 sm:grid-cols-2 xl:min-w-[520px] xl:grid-cols-2">
-        <div
-          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
-        >
-          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
-            >Foco</span
-          >
-          <p
-            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
-            x-text="$store.navigation.getPageMeta(page).focus"
-          ></p>
-        </div>
-
-        <div
-          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
-        >
-          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
-            >Tipo de dashboard</span
-          >
-          <p
-            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
-            x-text="$store.navigation.getPageMeta(page).levelLabel"
-          ></p>
-          <p
-            class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-400"
-            x-text="$store.navigation.getPageMeta(page).levelDescription"
-          ></p>
-        </div>
-
-        <div
-          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
-        >
-          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
-            >Publico principal</span
-          >
-          <p
-            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
-            x-text="$store.navigation.getPageMeta(page).audience"
-          ></p>
-        </div>
-
-        <div
-          class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
-        >
-          <span class="text-theme-xs tracking-[0.16em] text-gray-400 uppercase"
-            >Cadencia</span
-          >
-          <p
-            class="mt-1 text-sm font-semibold text-gray-800 dark:text-white/90"
-            x-text="$store.navigation.getPageMeta(page).cadence"
-          ></p>
-        </div>
+        <h1
+          class="mt-1 text-xl font-bold text-gray-900 dark:text-white"
+          x-text="$store.navigation.getPageMeta(page).title"
+        ></h1>
+        <p
+          class="mt-0.5 text-sm text-gray-500 dark:text-gray-400"
+          x-text="$store.navigation.getPageMeta(page).description"
+        ></p>
       </div>
     </div>
-  </section>
+
+    <!-- Direita: chips de metadata -->
+    <div class="flex shrink-0 flex-wrap items-center gap-2 sm:flex-nowrap">
+      <div class="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800/60">
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Foco</span>
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-200" x-text="$store.navigation.getPageMeta(page).focus"></span>
+      </div>
+
+      <div class="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800/60">
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Tipo</span>
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-200" x-text="$store.navigation.getPageMeta(page).levelLabel"></span>
+      </div>
+
+      <div class="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800/60">
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Público</span>
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-200" x-text="$store.navigation.getPageMeta(page).audience"></span>
+      </div>
+
+      <div class="flex items-center gap-1.5 rounded-lg border border-gray-100 bg-gray-50 px-3 py-1.5 dark:border-gray-700 dark:bg-gray-800/60">
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Cadência</span>
+        <span class="text-xs font-semibold text-gray-700 dark:text-gray-200" x-text="$store.navigation.getPageMeta(page).cadence"></span>
+      </div>
+    </div>
+  </div>
 </div>

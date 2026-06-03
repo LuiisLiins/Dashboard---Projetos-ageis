@@ -21,6 +21,8 @@ import initDomainCharts from "./components/domain-charts";
 import map01 from "./components/map-01";
 import "./components/calendar-init.js";
 import "./components/image-resize";
+import { generateReport } from "./components/report-generator";
+window.generateReport = generateReport;
 
 const createNavigationStore = () => ({
   groups: navigationGroups,
@@ -130,6 +132,25 @@ window.createAppShell = (pageKey) => ({
   notificacoes: [],
   unreadNotificacoes: 0,
 
+  toasts: [],
+
+  showToast(detail) {
+    const id = Date.now() + Math.random();
+    const duration = detail.duration || 4000;
+    this.toasts.push({ id, type: detail.type || 'info', title: detail.title || '', message: detail.message || '', visible: true });
+    setTimeout(() => {
+      const t = this.toasts.find(t => t.id === id);
+      if (t) t.visible = false;
+      setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300);
+    }, duration);
+  },
+
+  removeToast(id) {
+    const t = this.toasts.find(t => t.id === id);
+    if (t) t.visible = false;
+    setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 300);
+  },
+
   timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -206,20 +227,18 @@ window.createAppShell = (pageKey) => ({
         },
       );
       if (response.ok) {
-        alert("Perfil atualizado com sucesso!");
+        this.showToast({ type: 'success', title: 'Perfil atualizado', message: 'Dados salvos com sucesso.' });
         this.profileData.senha = "";
         this.currentUser.nome = this.profileData.nome;
         this.currentUser.email = this.profileData.email;
         localStorage.setItem("user", JSON.stringify(this.currentUser));
       } else {
         const errorData = await response.json();
-        alert(
-          "Erro ao atualizar: " + (errorData.message || "Verifique os dados."),
-        );
+        this.showToast({ type: 'error', title: 'Erro ao atualizar', message: errorData.message || 'Verifique os dados.' });
       }
     } catch (e) {
       console.error("Erro ao atualizar perfil", e);
-      alert("Erro de conexão ao atualizar perfil.");
+      this.showToast({ type: 'error', title: 'Erro de conexão', message: 'Não foi possível atualizar o perfil.' });
     }
   },
 
@@ -249,7 +268,8 @@ window.createAppShell = (pageKey) => ({
       financeiro: "financeiro",
       comercial: "comercial",
       clientes: "clientes",
-      estoque: "estoque",
+      estoque:   "estoque",
+      analytics: "analytics",
     };
     const endpoint = endpoints[this.page];
     if (endpoint) {
@@ -295,13 +315,16 @@ window.createAppShell = (pageKey) => ({
     }
   },
 
-  async fetchProdutos(page = 1, perPage = 50) {
+  async fetchProdutos(page = 1, perPage = 10, busca = '', status = '') {
     const token = localStorage.getItem("auth_token");
     if (!token) return;
 
     try {
+      const params = new URLSearchParams({ page, per_page: perPage });
+      if (busca) params.append('buscar', busca);
+      if (status) params.append('status', status);
       const response = await fetch(
-        `http://localhost:8000/api/produtos?page=${page}&per_page=${perPage}`,
+        `http://localhost:8000/api/produtos?${params}`,
         {
           method: "GET",
           headers: {
@@ -400,14 +423,13 @@ window.createAppShell = (pageKey) => ({
       if (response.ok) {
         localStorage.setItem("auth_token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        alert("Login feito com sucesso!");
         window.location.href = "index.html";
       } else {
-        alert(data.message || "Erro ao fazer login.");
+        this.showToast({ type: 'error', title: 'Erro ao fazer login', message: data.message || 'Verifique suas credenciais.' });
       }
     } catch (error) {
       console.error("Erro na requisição", error);
-      alert("Erro de conexão com o servidor.");
+      this.showToast({ type: 'error', title: 'Erro de conexão', message: 'Não foi possível conectar ao servidor.' });
     }
   },
 
@@ -429,6 +451,15 @@ window.createAppShell = (pageKey) => ({
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user");
     window.location.href = "login.html";
+  },
+
+  async downloadReport(format) {
+    const pageMeta = Alpine.store('navigation').getPageMeta(this.page);
+    const data = {
+      ...this.dashboardData,
+      empresa: (() => { try { const s = localStorage.getItem('empresa_data'); return s ? JSON.parse(s) : null; } catch(e) { return null; } })(),
+    };
+    await generateReport(this.page, data, pageMeta, format);
   },
 
   init() {
@@ -469,63 +500,89 @@ Alpine.store("navigation", createNavigationStore());
 window.aiChat = () => ({
   isOpen: false,
   isLoading: false,
-  userInput: '',
+  userInput: "",
   messages: [],
-  
+  conversationContext: [],
+
   toggleChat() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       setTimeout(() => {
-        const input = document.querySelector('input[placeholder="Pergunte sobre as vendas..."]');
+        const input = document.querySelector(
+          'input[placeholder="Pergunte sobre as vendas..."]',
+        );
         if (input) input.focus();
       }, 100);
     }
   },
-  
+
   async sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
-    
+
     const message = this.userInput.trim();
-    this.messages.push({ role: 'user', content: message });
-    this.userInput = '';
+    this.messages.push({ role: "user", content: message });
+    this.userInput = "";
     this.isLoading = true;
-    
+
     this.scrollToBottom();
-    
-    // Mock response for frontend visual demonstration
-    setTimeout(() => {
-      let mockReply = 'Desculpe, eu não entendi.';
-      const lowerMessage = message.toLowerCase();
-      
-      if (lowerMessage.includes('venda') || lowerMessage.includes('faturamento')) {
-        mockReply = 'As vendas deste mês estão **12.5% maiores** em relação ao mês anterior. O faturamento total foi de **R$ 450.250,50** com um total de 342 vendas concluídas.';
-      } else if (lowerMessage.includes('estoque') || lowerMessage.includes('produto')) {
-        mockReply = 'Temos **23 itens** com estoque crítico (abaixo da margem de segurança). O item mais crítico no momento é a Webcam HD 1080p, com apenas 5 unidades restantes.';
-      } else if (lowerMessage.includes('ola') || lowerMessage.includes('olá') || lowerMessage.includes('oi')) {
-        mockReply = 'Olá! Tudo ótimo por aqui. Como posso ajudar com os dados de hoje?';
+
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch("http://localhost:8000/api/chat/message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          message: message,
+          conversation: this.conversationContext,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.conversationContext.push({ role: "user", content: message });
+        this.conversationContext.push({
+          role: "assistant",
+          content: data.reply,
+        });
+        this.messages.push({ role: "assistant", content: data.reply });
       } else {
-        mockReply = 'Com base nos dados atuais, as métricas parecem estáveis. Para acessar relatórios completos, veja a aba "Estratégico". Posso ajudar com mais detalhes sobre um KPI específico?';
+        this.messages.push({
+          role: "assistant",
+          content:
+            "Desculpe, houve um erro ao processar sua mensagem. Tente novamente.",
+        });
       }
-      
-      this.messages.push({ role: 'assistant', content: mockReply });
-      this.isLoading = false;
-      this.scrollToBottom();
-    }, 1500);
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      this.messages.push({
+        role: "assistant",
+        content: "Erro de conexão. Verifique sua internet e tente novamente.",
+      });
+    }
+
+    this.isLoading = false;
+    this.scrollToBottom();
   },
-  
+
   scrollToBottom() {
     setTimeout(() => {
-      const container = document.getElementById('chat-messages');
+      const container = document.getElementById("chat-messages");
       if (container) {
         container.scrollTop = container.scrollHeight;
       }
     }, 50);
   },
-  
+
   formatMessage(text) {
     // Simple markdown to HTML for bold text
-    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  }
+    return text
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/\n/g, "<br>");
+  },
 });
 
 Alpine.start();

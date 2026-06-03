@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -14,6 +14,29 @@
       ...createAppShell('estoque'),
       selectedProducts: [],
       showComparison: false,
+      produtoPorPagina: 10,
+      produtoBusca: '',
+      produtoFiltroStatus: '',
+
+      paginaAtual() { return this.dashboardData.produtosPage || 1; },
+      totalPaginas() { return Math.ceil((this.dashboardData.produtosTotal || 0) / this.produtoPorPagina); },
+      paginasVisiveis() {
+        const total = this.totalPaginas();
+        const curr  = this.paginaAtual();
+        const pages = [];
+        for (let i = Math.max(1, curr - 2); i <= Math.min(total, curr + 2); i++) pages.push(i);
+        return pages;
+      },
+      async carregarProdutos(pagina) {
+        await this.fetchProdutos(pagina, this.produtoPorPagina, this.produtoBusca, this.produtoFiltroStatus);
+      },
+      async proximaPagina() {
+        if (this.paginaAtual() < this.totalPaginas()) await this.carregarProdutos(this.paginaAtual() + 1);
+      },
+      async paginaAnterior() {
+        if (this.paginaAtual() > 1) await this.carregarProdutos(this.paginaAtual() - 1);
+      },
+
       toggleAllProducts() {
         const allIds = (this.dashboardData.produtos || []).map(p => p.id);
         this.selectedProducts.length === allIds.length ? this.selectedProducts = [] : this.selectedProducts = allIds;
@@ -23,7 +46,35 @@
       },
       compareProducts() {
         this.showComparison = !this.showComparison;
-      }
+      },
+
+      showAddModal: false,
+      newProduct: { nome: '', sku: '', categoria: '', quantidade: null, qty_minima: 10, preco_unitario: null },
+      calcStatus(qty, minQty) {
+        if (qty <= minQty) return 'Crítico';
+        if (qty <= minQty * 2) return 'Baixo';
+        return 'OK';
+      },
+      addProduct() {
+        const p = {
+          ...this.newProduct,
+          id: Date.now(),
+          status: this.calcStatus(this.newProduct.quantidade || 0, this.newProduct.qty_minima || 10),
+        };
+        if (!this.dashboardData.produtos) this.dashboardData.produtos = [];
+        this.dashboardData.produtos.unshift(p);
+        this.dashboardData.produtosTotal = (this.dashboardData.produtosTotal || 0) + 1;
+        this.newProduct = { nome: '', sku: '', categoria: '', quantidade: null, qty_minima: 10, preco_unitario: null };
+        this.showAddModal = false;
+      },
+      toggleIndisponivel(product) {
+        if (product.status === 'Indisponível') {
+          product.status = this.calcStatus(product.quantidade || 0, product.qty_minima || 10);
+        } else {
+          product._statusAntes = product.status;
+          product.status = 'Indisponível';
+        }
+      },
     }"
     x-init="init()"
     :class="{'dark bg-gray-900': darkMode === true}"
@@ -42,6 +93,7 @@
         <main>
           <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
             <include src="./partials/dashboard/page-header.html"></include>
+            <include src="./partials/dashboard/export-buttons.html"></include>
 
             <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div
@@ -208,21 +260,21 @@
               </div>
             </section>
 
-            <section class="mt-6 grid gap-4 xl:grid-cols-2">
+            <section class="mt-6 grid gap-4 xl:grid-cols-3">
               <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                class="xl:col-span-2 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Movimentação de Estoque
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Movimentação de Estoque</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Entradas e saídas mensais (unidades)</p>
                   </div>
+                  <span class="inline-flex items-center rounded-full bg-warning-50 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-500/15 dark:text-warning-300">
+                    Giro 4.5x
+                  </span>
                 </div>
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
-                  <div id="chartThree" class="min-w-[400px]"></div>
+                <div class="w-full">
+                  <div id="stockMovementChart" class="w-full"></div>
                 </div>
               </div>
 
@@ -231,15 +283,12 @@
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Curva ABC de Produtos
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Curva ABC</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Distribuição por valor de estoque</p>
                   </div>
                 </div>
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
-                  <div id="chartOne" class="min-w-[400px]"></div>
+                <div class="w-full">
+                  <div id="stockAbcChart"></div>
                 </div>
               </div>
             </section>
@@ -261,6 +310,36 @@
                       Controle de inventário e disponibilidade
                     </p>
                   </div>
+                  <button
+                    @click="showAddModal = true"
+                    class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Adicionar Produto
+                  </button>
+                </div>
+
+                <!-- Legenda de Status -->
+                <div class="mb-4 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50">
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Status por Quantidade</p>
+                  <div class="flex flex-wrap gap-4 text-xs">
+                    <div class="flex items-center gap-2">
+                      <span class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-0.5 font-medium">OK</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade acima de 2× o mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300 inline-block rounded-full px-2 py-0.5 font-medium">Baixo</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade entre 1× e 2× o mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-0.5 font-medium">Crítico</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade igual ou abaixo do mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block rounded-full bg-gray-200 px-2 py-0.5 font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">Indisponível</span>
+                      <span class="text-gray-600 dark:text-gray-400">Definido manualmente — sem relação com quantidade</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div
@@ -269,17 +348,29 @@
                   <input
                     type="text"
                     placeholder="Buscar produto, SKU ou categoria..."
+                    x-model="produtoBusca"
                     class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                    @input="$dispatch('search-produtos', { query: $event.target.value })"
+                    @input.debounce.350ms="carregarProdutos(1)"
                   />
                   <select
+                    x-model="produtoFiltroStatus"
                     class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                    @change="$dispatch('filter-status', { status: $event.target.value })"
+                    @change="carregarProdutos(1)"
                   >
                     <option value="">Todos os Status</option>
-                    <option value="ok">OK</option>
-                    <option value="baixo">Baixo</option>
-                    <option value="critico">Crítico</option>
+                    <option value="OK">OK</option>
+                    <option value="Baixo">Baixo</option>
+                    <option value="Crítico">Crítico</option>
+                    <option value="Indisponível">Indisponível</option>
+                  </select>
+                  <select
+                    x-model.number="produtoPorPagina"
+                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @change="carregarProdutos(1)"
+                  >
+                    <option value="10">10 por página</option>
+                    <option value="25">25 por página</option>
+                    <option value="50">50 por página</option>
                   </select>
                 </div>
 
@@ -307,7 +398,7 @@
                   </button>
                 </div>
 
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                <div class="w-full">
                   <table class="w-full text-sm">
                     <thead>
                       <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -356,6 +447,11 @@
                         >
                           Status
                         </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Ações
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -399,24 +495,27 @@
                             x-text="'R$ ' + formatNumber(product.quantidade * product.preco_unitario, 2)"
                           ></td>
                           <td class="px-4 py-3">
-                            <div
-                              x-show="product.status === 'OK'"
-                              class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
-                            >
-                              OK
-                            </div>
-                            <div
-                              x-show="product.status === 'Baixo'"
-                              class="bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
-                            >
-                              Baixo
-                            </div>
-                            <div
-                              x-show="product.status === 'Crítico'"
-                              class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium"
-                            >
-                              Crítico
-                            </div>
+                            <span
+                              class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium"
+                              :class="{
+                                'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300': product.status === 'OK',
+                                'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300': product.status === 'Baixo',
+                                'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300': product.status === 'Crítico',
+                                'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300': product.status === 'Indisponível'
+                              }"
+                              x-text="product.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3">
+                            <button
+                              @click="toggleIndisponivel(product)"
+                              class="rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors"
+                              :class="product.status === 'Indisponível'
+                                ? 'border-success-300 bg-success-50 text-success-700 hover:bg-success-100 dark:border-success-700 dark:bg-success-500/10 dark:text-success-300'
+                                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'"
+                              :title="product.status === 'Indisponível' ? 'Reativar produto' : 'Marcar como indisponível'"
+                              x-text="product.status === 'Indisponível' ? 'Reativar' : 'Indisponível'"
+                            ></button>
                           </td>
                         </tr>
                       </template>
@@ -425,63 +524,75 @@
                 </div>
 
                 <div
-                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
+                  class="mt-4 flex flex-col gap-3 border-t border-gray-200 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <!-- Contador -->
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
                     Mostrando
-                    <span
-                      class="font-semibold"
-                      x-text="(dashboardData.produtosPage - 1) * 6 + 1"
-                    ></span>
-                    a
-                    <span
-                      class="font-semibold"
-                      x-text="Math.min(dashboardData.produtosPage * 6, dashboardData.produtosTotal || (dashboardData.produtos || []).length)"
-                    ></span>
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="(paginaAtual() - 1) * produtoPorPagina + 1"></span>
+                    –
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="Math.min(paginaAtual() * produtoPorPagina, dashboardData.produtosTotal || 0)"></span>
                     de
-                    <span
-                      class="font-semibold"
-                      x-text="dashboardData.produtosTotal || (dashboardData.produtos || []).length"
-                    ></span>
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="dashboardData.produtosTotal || 0"></span>
                     produtos
-                  </div>
-                  <div class="flex items-center gap-2">
+                  </p>
+
+                  <!-- Controles -->
+                  <div class="flex items-center gap-1">
+                    <!-- Anterior -->
                     <button
-                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('prev-page-produtos')"
+                      @click="paginaAnterior()"
+                      :disabled="paginaAtual() <= 1"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
-                      ← Anterior
+                      ←
                     </button>
-                    <div class="flex items-center gap-1">
+
+                    <!-- Primeira página (se fora da janela) -->
+                    <template x-if="paginasVisiveis()[0] > 1">
                       <button
-                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
-                      >
-                        1
-                      </button>
+                        @click="carregarProdutos(1)"
+                        class="min-w-[2.25rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >1</button>
+                    </template>
+                    <template x-if="paginasVisiveis()[0] > 2">
+                      <span class="select-none px-1 text-gray-400">…</span>
+                    </template>
+
+                    <!-- Janela de páginas -->
+                    <template x-for="p in paginasVisiveis()" :key="p">
                       <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        2
-                      </button>
+                        @click="carregarProdutos(p)"
+                        :class="p === paginaAtual()
+                          ? 'bg-brand-600 text-white dark:bg-brand-500 border-brand-600 dark:border-brand-500'
+                          : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                        class="min-w-[2.25rem] rounded-lg border px-2 py-2 text-sm font-medium transition-colors"
+                        x-text="p"
+                      ></button>
+                    </template>
+
+                    <!-- Última página (se fora da janela) -->
+                    <template x-if="totalPaginas() > 0 && paginasVisiveis()[paginasVisiveis().length - 1] < totalPaginas() - 1">
+                      <span class="select-none px-1 text-gray-400">…</span>
+                    </template>
+                    <template x-if="totalPaginas() > 0 && paginasVisiveis()[paginasVisiveis().length - 1] < totalPaginas()">
                       <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        3
-                      </button>
-                      <span class="px-2 text-gray-600 dark:text-gray-400"
-                        >...</span
-                      >
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        57
-                      </button>
-                    </div>
+                        @click="carregarProdutos(totalPaginas())"
+                        class="min-w-[2.25rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        x-text="totalPaginas()"
+                      ></button>
+                    </template>
+
+                    <!-- Próximo -->
                     <button
-                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('next-page-produtos')"
+                      @click="proximaPagina()"
+                      :disabled="paginaAtual() >= totalPaginas()"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
-                      Próximo →
+                      →
                     </button>
                   </div>
                 </div>
@@ -597,6 +708,141 @@
             </section>
           </div>
         </main>
+      </div>
+    </div>
+    <!-- Modal: Adicionar Produto -->
+    <div
+      x-show="showAddModal"
+      x-transition.opacity
+      class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      @keydown.escape.window="showAddModal = false"
+    >
+      <div
+        x-show="showAddModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-900"
+        @click.stop
+      >
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Adicionar Produto ao Estoque</h3>
+          <button
+            @click="showAddModal = false"
+            class="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="addProduct()" class="space-y-4">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Produto <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                x-model="newProduct.nome"
+                required
+                placeholder="Ex: Camiseta Básica P"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">SKU <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                x-model="newProduct.sku"
+                required
+                placeholder="Ex: CAM-BAS-P-001"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+              <input
+                type="text"
+                x-model="newProduct.categoria"
+                placeholder="Ex: Vestuário"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Quantidade em Estoque <span class="text-red-500">*</span></label>
+              <input
+                type="number"
+                x-model.number="newProduct.quantidade"
+                required
+                min="0"
+                placeholder="0"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Quantidade Mínima
+                <span class="text-xs font-normal text-gray-400">(define o status)</span>
+              </label>
+              <input
+                type="number"
+                x-model.number="newProduct.qty_minima"
+                min="0"
+                placeholder="10"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Preço Unitário (R$)</label>
+              <input
+                type="number"
+                x-model.number="newProduct.preco_unitario"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <!-- Preview do status calculado -->
+          <div class="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              Status calculado:
+              <span
+                class="ml-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                :class="{
+                  'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'OK',
+                  'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'Baixo',
+                  'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'Crítico'
+                }"
+                x-text="calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10)"
+              ></span>
+            </p>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-1">
+            <button
+              type="button"
+              @click="showAddModal = false"
+              class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+            >
+              Adicionar Produto
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </body>

@@ -1,4 +1,4 @@
-<div
+﻿<div
   x-data="{
     isOpen: false,
     productIds: [],
@@ -43,7 +43,7 @@
   x-show="isOpen"
   style="display: none;"
   @click="if ($event.target === $el) isOpen = false"
-  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+  class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
 >
   <div class="bg-white dark:bg-gray-900 rounded-lg shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-y-auto">
     <div class="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">

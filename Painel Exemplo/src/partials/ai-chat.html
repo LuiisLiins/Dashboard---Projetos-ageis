@@ -1,56 +1,149 @@
-<div x-data="aiChat()" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-  
+<div
+  x-data="aiChat()"
+  class="fixed right-6 bottom-6 z-50 flex flex-col items-end"
+>
   <!-- Chat Window -->
-  <div 
-    x-show="isOpen" 
+  <div
+    x-show="isOpen"
     x-transition:enter="transition ease-out duration-300 transform"
     x-transition:enter-start="opacity-0 translate-y-4 scale-95"
     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
     x-transition:leave="transition ease-in duration-200 transform"
     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
     x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-    class="mb-4 w-[350px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900 flex flex-col"
-    style="display: none; height: 500px; max-height: calc(100vh - 120px);"
+    class="mb-4 flex w-[350px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900"
+    style="display: none; height: 500px; max-height: calc(100vh - 120px)"
   >
     <!-- Header -->
-    <div class="flex items-center justify-between bg-brand-500 p-4 text-white dark:bg-brand-600">
+    <div
+      class="bg-brand-500 dark:bg-brand-600 flex items-center justify-between p-4 text-white"
+    >
       <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+            />
+          </svg>
         </div>
         <div>
           <h3 class="font-bold">Assistente IA</h3>
-          <p class="text-xs text-brand-100">Consultor de Vendas</p>
+          <p class="text-brand-100 text-xs">Dúvidas sobre a aplicação</p>
         </div>
       </div>
-      <button @click="toggleChat()" class="rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      <button
+        @click="toggleChat()"
+        class="rounded-full p-1 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
       </button>
     </div>
 
     <!-- Messages Area -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50 dark:bg-gray-900/50" id="chat-messages">
+    <div
+      class="custom-scrollbar flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4 dark:bg-gray-900/50"
+      id="chat-messages"
+    >
       <!-- Welcome Message -->
       <div class="flex items-start gap-2.5">
-        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <div
+          class="bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+            />
+          </svg>
         </div>
-        <div class="flex flex-col gap-1 w-full max-w-[250px]">
-          <div class="rounded-e-xl rounded-es-xl border border-gray-200 bg-white p-3 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-300">
-            Olá! Sou seu assistente inteligente. Posso te ajudar com dúvidas sobre as vendas, produtos e faturamento. O que você gostaria de saber?
+        <div class="flex w-full max-w-[250px] flex-col gap-1.5 space-y-2">
+          <div
+            class="flex items-start gap-2 rounded-e-xl rounded-es-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700 dark:border-blue-900/30 dark:bg-blue-900/20 dark:text-blue-300"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mt-0.5 shrink-0"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span
+              ><strong>ℹ️ Dúvidas sobre funcionalidades:</strong> Posso ajudar a
+              entender como usar o dashboard, explicar recursos e orientar sobre
+              recursos.</span
+            >
+          </div>
+          <div
+            class="rounded-e-xl rounded-es-xl border border-gray-200 bg-white p-3 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-300"
+          >
+            Olá! 👋 Sou seu assistente de ajuda. Pergunte sobre como usar as
+            funcionalidades do dashboard: "Como faço para filtrar dados?", "O
+            que significa este KPI?", "Como exportar relatórios?" ou qualquer
+            outra dúvida!
           </div>
         </div>
       </div>
 
       <!-- Dynamic Messages -->
       <template x-for="(msg, index) in messages" :key="index">
-        <div class="flex items-start gap-2.5" :class="msg.role === 'user' ? 'flex-row-reverse' : ''">
-          <div x-show="msg.role !== 'user'" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <div
+          class="flex items-start gap-2.5"
+          :class="msg.role === 'user' ? 'flex-row-reverse' : ''"
+        >
+          <div
+            x-show="msg.role !== 'user'"
+            class="bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+              />
+            </svg>
           </div>
-          <div class="flex flex-col gap-1 w-full max-w-[250px]">
-            <div 
-              class="p-3 text-sm" 
+          <div class="flex w-full max-w-[250px] flex-col gap-1">
+            <div
+              class="p-3 text-sm"
               :class="msg.role === 'user' ? 'rounded-s-xl rounded-ee-xl bg-brand-500 text-white dark:bg-brand-600' : 'rounded-e-xl rounded-es-xl border border-gray-200 bg-white text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-300'"
               x-html="formatMessage(msg.content)"
             ></div>
@@ -60,13 +153,32 @@
 
       <!-- Loading Indicator -->
       <div x-show="isLoading" class="flex items-start gap-2.5">
-        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        <div
+          class="bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-400 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+            />
+          </svg>
         </div>
-        <div class="flex flex-col gap-1 w-full max-w-[250px]">
-          <div class="rounded-e-xl rounded-es-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-800 flex items-center gap-1.5">
-            <div class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]"></div>
-            <div class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.15s]"></div>
+        <div class="flex w-full max-w-[250px] flex-col gap-1">
+          <div
+            class="flex items-center gap-1.5 rounded-e-xl rounded-es-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-800"
+          >
+            <div
+              class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]"
+            ></div>
+            <div
+              class="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.15s]"
+            ></div>
             <div class="h-2 w-2 animate-bounce rounded-full bg-gray-400"></div>
           </div>
         </div>
@@ -74,39 +186,87 @@
     </div>
 
     <!-- Input Area -->
-    <div class="border-t border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+    <div
+      class="border-t border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+    >
       <form @submit.prevent="sendMessage()" class="relative flex items-center">
-        <input 
-          x-model="userInput" 
-          type="text" 
-          placeholder="Pergunte sobre as vendas..." 
-          class="w-full rounded-full border border-gray-300 bg-gray-50 py-2.5 pl-4 pr-12 text-sm text-gray-800 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+        <input
+          x-model="userInput"
+          type="text"
+          placeholder="Pergunte sobre as vendas..."
+          class="focus:border-brand-500 focus:ring-brand-500 w-full rounded-full border border-gray-300 bg-gray-50 py-2.5 pr-12 pl-4 text-sm text-gray-800 focus:ring-1 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
           :disabled="isLoading"
-        >
-        <button 
-          type="submit" 
-          class="absolute right-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-white hover:bg-brand-600 transition-colors disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          class="bg-brand-500 hover:bg-brand-600 absolute right-1.5 flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors disabled:opacity-50"
           :disabled="isLoading || !userInput.trim()"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-0.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="ml-0.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
         </button>
       </form>
     </div>
   </div>
 
   <!-- Floating Button -->
-  <button 
-    @click="toggleChat()" 
-    class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-500 text-white shadow-lg shadow-brand-500/30 transition-all hover:scale-105 hover:bg-brand-600 active:scale-95 relative group"
+  <button
+    @click="toggleChat()"
+    class="bg-brand-500 shadow-brand-500/30 hover:bg-brand-600 group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all hover:scale-105 active:scale-95"
   >
-    <div class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-error-500 text-[10px] font-bold text-white border-2 border-white dark:border-gray-900">1</div>
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-show="!isOpen"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" x-show="isOpen" style="display: none;"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    
+    <div
+      class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-blue-500 text-[10px] font-bold text-white dark:border-gray-900"
+    >
+      ?
+    </div>
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      x-show="!isOpen"
+    >
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      x-show="isOpen"
+      style="display: none"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+
     <!-- Tooltip -->
-    <div class="absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none dark:bg-white dark:text-gray-900" x-show="!isOpen">
-      Pergunte à IA
-      <div class="absolute right-[-4px] top-1/2 -translate-y-1/2 border-y-4 border-l-4 border-y-transparent border-l-gray-900 dark:border-l-white"></div>
+    <div
+      class="pointer-events-none absolute top-1/2 right-full mr-4 -translate-y-1/2 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100 dark:bg-white dark:text-gray-900"
+      x-show="!isOpen"
+    >
+      Dúvidas sobre a app?
+      <div
+        class="absolute top-1/2 right-[-4px] -translate-y-1/2 border-y-4 border-l-4 border-y-transparent border-l-gray-900 dark:border-l-white"
+      ></div>
     </div>
   </button>
 </div>

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,42 @@
     <title>Dashboard Clientes | Dashboard Multidominio</title>
   </head>
   <body
-    x-data="createAppShell('clientes')"
+    x-data="{
+      ...createAppShell('clientes'),
+      async exportarRelatorio(format) {
+        const pageMeta = Alpine.store('navigation').getPageMeta(this.page);
+        const clientes = [
+          { nome: 'João Silva',      email: 'joao@example.com',      telefone: '(11) 99999-0001', status: 'Ativo',    data: '15/01/2025' },
+          { nome: 'Pedro Oliveira',  email: 'pedro@example.com',     telefone: '(11) 99999-0003', status: 'Ativo',    data: '10/03/2025' },
+          { nome: 'Carlos Mendes',   email: 'carlos@example.com',    telefone: '(11) 99999-0005', status: 'Inativo',  data: '12/05/2025' },
+          { nome: 'Beatriz Lima',    email: 'beatriz@example.com',   telefone: '(11) 99999-0006', status: 'Ativo',    data: '22/04/2025' },
+          { nome: 'Fernando Gomes',  email: 'fernando@example.com',  telefone: '(11) 99999-0007', status: 'Ativo',    data: '01/05/2025' },
+          { nome: 'Luciana Pereira', email: 'luciana@example.com',   telefone: '(11) 99999-0011', status: 'Ativo',    data: '14/06/2025' },
+          { nome: 'Rafael Souza',    email: 'rafael@example.com',    telefone: '(11) 99999-0012', status: 'Ativo',    data: '30/06/2025' },
+          { nome: 'Camila Torres',   email: 'camila@example.com',    telefone: '(11) 99999-0013', status: 'Inativo',  data: '07/07/2025' },
+          { nome: 'Thiago Barbosa',  email: 'thiago@example.com',    telefone: '(11) 99999-0014', status: 'Ativo',    data: '19/07/2025' },
+          { nome: 'Priscila Neves',  email: 'priscila@example.com',  telefone: '(11) 99999-0015', status: 'Ativo',    data: '25/08/2025' },
+          { nome: 'Marcos Ribeiro',  email: 'marcos@example.com',    telefone: '(11) 99999-0016', status: 'Ativo',    data: '03/09/2025' },
+          { nome: 'Vanessa Cardoso', email: 'vanessa@example.com',   telefone: '(11) 99999-0017', status: 'Inativo',  data: '17/09/2025' },
+          { nome: 'Eduardo Pinto',   email: 'eduardo@example.com',   telefone: '(11) 99999-0018', status: 'Ativo',    data: '08/10/2025' },
+          { nome: 'Patrícia Moura',  email: 'patricia@example.com',  telefone: '(11) 99999-0019', status: 'Ativo',    data: '21/10/2025' },
+          { nome: 'Diego Carvalho',  email: 'diego@example.com',     telefone: '(11) 99999-0020', status: 'Ativo',    data: '05/11/2025' },
+        ];
+        const vendedores = [
+          { nome: 'Maria Santos',    email: 'maria@example.com',     telefone: '(11) 99999-0002', status: 'Ativo',    data: '20/02/2025' },
+          { nome: 'Ana Costa',       email: 'ana@example.com',       telefone: '(11) 99999-0004', status: 'Ativo',    data: '05/04/2025' },
+          { nome: 'Roberto Alves',   email: 'roberto@example.com',   telefone: '(11) 99999-0008', status: 'Ativo',    data: '18/03/2025' },
+          { nome: 'Juliana Rocha',   email: 'juliana@example.com',   telefone: '(11) 99999-0009', status: 'Inativo',  data: '28/02/2025' },
+          { nome: 'Lucas Ferreira',  email: 'lucas@example.com',     telefone: '(11) 99999-0010', status: 'Ativo',    data: '08/04/2025' },
+          { nome: 'Fernanda Dias',   email: 'fernanda@example.com',  telefone: '(11) 99999-0021', status: 'Ativo',    data: '12/04/2025' },
+          { nome: 'Rodrigo Lima',    email: 'rodrigo@example.com',   telefone: '(11) 99999-0022', status: 'Ativo',    data: '27/05/2025' },
+          { nome: 'Tatiane Melo',    email: 'tatiane@example.com',   telefone: '(11) 99999-0023', status: 'Inativo',  data: '11/06/2025' },
+          { nome: 'Gustavo Cunha',   email: 'gustavo@example.com',   telefone: '(11) 99999-0024', status: 'Ativo',    data: '02/07/2025' },
+          { nome: 'Renata Faria',    email: 'renata@example.com',    telefone: '(11) 99999-0025', status: 'Ativo',    data: '16/08/2025' },
+        ];
+        await generateReport('clientes', { ...this.dashboardData, clientes, vendedores }, pageMeta, format);
+      }
+    }"
     :class="{'dark bg-gray-900': darkMode === true}"
   >
     <include src="./partials/preloader.html"></include>
@@ -27,6 +62,7 @@
         <main>
           <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
             <include src="./partials/dashboard/page-header.html"></include>
+            <include src="./partials/dashboard/export-buttons.html"></include>
 
             <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div
@@ -262,21 +298,21 @@
               </div>
             </section>
 
-            <section class="mt-6 grid gap-4 xl:grid-cols-2">
+            <section class="mt-6 grid gap-4 xl:grid-cols-3">
               <div
-                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                class="xl:col-span-2 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Crescimento da Base de Clientes
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Evolução da Base de Clientes</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Ativos, novos e perdidos por mês</p>
                   </div>
+                  <span class="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-300">
+                    +37.8% YTD
+                  </span>
                 </div>
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
-                  <div id="chartThree" class="min-w-[400px]"></div>
+                <div class="w-full">
+                  <div id="clientsGrowthChart" class="w-full"></div>
                 </div>
               </div>
 
@@ -285,15 +321,12 @@
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Perfil Demográfico (Região)
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Segmentos</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Distribuição por tipo de cliente</p>
                   </div>
                 </div>
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
-                  <div id="chartOne" class="min-w-[400px]"></div>
+                <div class="w-full">
+                  <div id="clientsSegmentChart"></div>
                 </div>
               </div>
             </section>
@@ -302,214 +335,140 @@
               <!-- Lista de Clientes -->
               <div
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                x-data="{
+                  allRows: [
+                    { nome: 'João Silva', email: 'joao@example.com', telefone: '(11) 99999-0001', status: 'Ativo', data: '15/01/2025' },
+                    { nome: 'Pedro Oliveira', email: 'pedro@example.com', telefone: '(11) 99999-0003', status: 'Ativo', data: '10/03/2025' },
+                    { nome: 'Carlos Mendes', email: 'carlos@example.com', telefone: '(11) 99999-0005', status: 'Inativo', data: '12/05/2025' },
+                    { nome: 'Beatriz Lima', email: 'beatriz@example.com', telefone: '(11) 99999-0006', status: 'Ativo', data: '22/04/2025' },
+                    { nome: 'Fernando Gomes', email: 'fernando@example.com', telefone: '(11) 99999-0007', status: 'Ativo', data: '01/05/2025' },
+                    { nome: 'Luciana Pereira', email: 'luciana@example.com', telefone: '(11) 99999-0011', status: 'Ativo', data: '14/06/2025' },
+                    { nome: 'Rafael Souza', email: 'rafael@example.com', telefone: '(11) 99999-0012', status: 'Ativo', data: '30/06/2025' },
+                    { nome: 'Camila Torres', email: 'camila@example.com', telefone: '(11) 99999-0013', status: 'Inativo', data: '07/07/2025' },
+                    { nome: 'Thiago Barbosa', email: 'thiago@example.com', telefone: '(11) 99999-0014', status: 'Ativo', data: '19/07/2025' },
+                    { nome: 'Priscila Neves', email: 'priscila@example.com', telefone: '(11) 99999-0015', status: 'Ativo', data: '25/08/2025' },
+                    { nome: 'Marcos Ribeiro', email: 'marcos@example.com', telefone: '(11) 99999-0016', status: 'Ativo', data: '03/09/2025' },
+                    { nome: 'Vanessa Cardoso', email: 'vanessa@example.com', telefone: '(11) 99999-0017', status: 'Inativo', data: '17/09/2025' },
+                    { nome: 'Eduardo Pinto', email: 'eduardo@example.com', telefone: '(11) 99999-0018', status: 'Ativo', data: '08/10/2025' },
+                    { nome: 'Patrícia Moura', email: 'patricia@example.com', telefone: '(11) 99999-0019', status: 'Ativo', data: '21/10/2025' },
+                    { nome: 'Diego Carvalho', email: 'diego@example.com', telefone: '(11) 99999-0020', status: 'Ativo', data: '05/11/2025' }
+                  ],
+                  search: '',
+                  page: 1,
+                  perPage: 5,
+                  get filtered() {
+                    const q = this.search.toLowerCase();
+                    if (!q) return this.allRows;
+                    return this.allRows.filter(r =>
+                      r.nome.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)
+                    );
+                  },
+                  get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
+                  get paged() { return this.filtered.slice((this.page - 1) * this.perPage, this.page * this.perPage); },
+                  get start() { return this.filtered.length === 0 ? 0 : (this.page - 1) * this.perPage + 1; },
+                  get end() { return Math.min(this.page * this.perPage, this.filtered.length); },
+                  get pageNumbers() {
+                    const total = this.totalPages;
+                    const cur = this.page;
+                    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+                    const pages = new Set([1, total, cur]);
+                    if (cur > 1) pages.add(cur - 1);
+                    if (cur < total) pages.add(cur + 1);
+                    return Array.from(pages).sort((a, b) => a - b);
+                  },
+                  showEllipsisBefore(n) {
+                    const nums = this.pageNumbers;
+                    const idx = nums.indexOf(n);
+                    return idx > 0 && nums[idx - 1] !== n - 1;
+                  },
+                  prevPage() { if (this.page > 1) this.page--; },
+                  nextPage() { if (this.page < this.totalPages) this.page++; }
+                }"
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Lista de Clientes
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Lista de Clientes</h3>
                   </div>
                   <div class="flex items-center gap-2">
                     <input
                       type="text"
                       placeholder="Buscar clientes..."
                       class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                      @input="$dispatch('search-clientes', { query: $event.target.value })"
+                      x-model="search"
+                      @input="page = 1"
                     />
                   </div>
                 </div>
 
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                <div class="w-full">
                   <table class="w-full text-sm">
                     <thead>
                       <tr class="border-b border-gray-200 dark:border-gray-700">
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Nome
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Email
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Telefone
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Status
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Data de Cadastro
-                        </th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Nome</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Telefone</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Data de Cadastro</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          João Silva
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          joao@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0001
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          15/01/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Pedro Oliveira
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          pedro@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0003
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          10/03/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Carlos Mendes
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          carlos@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0005
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Inativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          12/05/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Beatriz Lima
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          beatriz@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0006
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          22/04/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Fernando Gomes
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          fernando@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0007
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          01/05/2025
-                        </td>
+                      <template x-for="row in paged" :key="row.email">
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50">
+                          <td class="px-4 py-3 text-gray-800 dark:text-gray-200" x-text="row.nome"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.email"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.telefone"></td>
+                          <td class="px-4 py-3">
+                            <span
+                              class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                              :class="row.status === 'Ativo'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300'
+                                : 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300'"
+                              x-text="row.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.data"></td>
+                        </tr>
+                      </template>
+                      <tr x-show="paged.length === 0">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum cliente encontrado.</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
-                <div
-                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
-                >
+                <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
                   <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Mostrando <span class="font-semibold">1</span> a
-                    <span class="font-semibold">5</span> de
-                    <span class="font-semibold">32</span> clientes
+                    Mostrando <span class="font-semibold" x-text="start"></span> a
+                    <span class="font-semibold" x-text="end"></span> de
+                    <span class="font-semibold" x-text="filtered.length"></span> clientes
                   </div>
                   <div class="flex items-center gap-2">
                     <button
                       class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('prev-page-clientes')"
+                      :disabled="page === 1"
+                      @click="prevPage()"
                     >
                       ← Anterior
                     </button>
                     <div class="flex items-center gap-1">
-                      <button
-                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
-                      >
-                        1
-                      </button>
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        2
-                      </button>
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        3
-                      </button>
-                      <span class="px-2 text-gray-600 dark:text-gray-400"
-                        >...</span
-                      >
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        7
-                      </button>
+                      <template x-for="n in pageNumbers" :key="n">
+                        <span class="flex items-center">
+                          <span x-show="showEllipsisBefore(n)" class="px-1 text-gray-600 dark:text-gray-400">…</span>
+                          <button
+                            class="min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium transition-colors"
+                            :class="n === page
+                              ? 'bg-brand-600 dark:bg-brand-500 text-white'
+                              : 'border border-gray-200 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                            @click="page = n"
+                            x-text="n"
+                          ></button>
+                        </span>
+                      </template>
                     </div>
                     <button
-                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('next-page-clientes')"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === totalPages"
+                      @click="nextPage()"
                     >
                       Próximo →
                     </button>
@@ -520,206 +479,135 @@
               <!-- Lista de Vendedores -->
               <div
                 class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                x-data="{
+                  allRows: [
+                    { nome: 'Maria Santos', email: 'maria@example.com', telefone: '(11) 99999-0002', status: 'Ativo', data: '20/02/2025' },
+                    { nome: 'Ana Costa', email: 'ana@example.com', telefone: '(11) 99999-0004', status: 'Ativo', data: '05/04/2025' },
+                    { nome: 'Roberto Alves', email: 'roberto@example.com', telefone: '(11) 99999-0008', status: 'Ativo', data: '18/03/2025' },
+                    { nome: 'Juliana Rocha', email: 'juliana@example.com', telefone: '(11) 99999-0009', status: 'Inativo', data: '28/02/2025' },
+                    { nome: 'Lucas Ferreira', email: 'lucas@example.com', telefone: '(11) 99999-0010', status: 'Ativo', data: '08/04/2025' },
+                    { nome: 'Fernanda Dias', email: 'fernanda@example.com', telefone: '(11) 99999-0021', status: 'Ativo', data: '12/04/2025' },
+                    { nome: 'Rodrigo Lima', email: 'rodrigo@example.com', telefone: '(11) 99999-0022', status: 'Ativo', data: '27/05/2025' },
+                    { nome: 'Tatiane Melo', email: 'tatiane@example.com', telefone: '(11) 99999-0023', status: 'Inativo', data: '11/06/2025' },
+                    { nome: 'Gustavo Cunha', email: 'gustavo@example.com', telefone: '(11) 99999-0024', status: 'Ativo', data: '02/07/2025' },
+                    { nome: 'Renata Faria', email: 'renata@example.com', telefone: '(11) 99999-0025', status: 'Ativo', data: '16/08/2025' }
+                  ],
+                  search: '',
+                  page: 1,
+                  perPage: 5,
+                  get filtered() {
+                    const q = this.search.toLowerCase();
+                    if (!q) return this.allRows;
+                    return this.allRows.filter(r =>
+                      r.nome.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)
+                    );
+                  },
+                  get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
+                  get paged() { return this.filtered.slice((this.page - 1) * this.perPage, this.page * this.perPage); },
+                  get start() { return this.filtered.length === 0 ? 0 : (this.page - 1) * this.perPage + 1; },
+                  get end() { return Math.min(this.page * this.perPage, this.filtered.length); },
+                  get pageNumbers() {
+                    const total = this.totalPages;
+                    const cur = this.page;
+                    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+                    const pages = new Set([1, total, cur]);
+                    if (cur > 1) pages.add(cur - 1);
+                    if (cur < total) pages.add(cur + 1);
+                    return Array.from(pages).sort((a, b) => a - b);
+                  },
+                  showEllipsisBefore(n) {
+                    const nums = this.pageNumbers;
+                    const idx = nums.indexOf(n);
+                    return idx > 0 && nums[idx - 1] !== n - 1;
+                  },
+                  prevPage() { if (this.page > 1) this.page--; },
+                  nextPage() { if (this.page < this.totalPages) this.page++; }
+                }"
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Lista de Vendedores
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Lista de Vendedores</h3>
                   </div>
                   <div class="flex items-center gap-2">
                     <input
                       type="text"
                       placeholder="Buscar vendedores..."
                       class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-                      @input="$dispatch('search-vendedores', { query: $event.target.value })"
+                      x-model="search"
+                      @input="page = 1"
                     />
                   </div>
                 </div>
 
-                <div class="custom-scrollbar max-w-full overflow-x-auto">
+                <div class="w-full">
                   <table class="w-full text-sm">
                     <thead>
                       <tr class="border-b border-gray-200 dark:border-gray-700">
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Nome
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Email
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Telefone
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Status
-                        </th>
-                        <th
-                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
-                        >
-                          Data de Cadastro
-                        </th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Nome</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Telefone</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Data de Cadastro</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Maria Santos
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          maria@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0002
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          20/02/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Ana Costa
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          ana@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0004
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          05/04/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Roberto Alves
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          roberto@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0008
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          18/03/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Juliana Rocha
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          juliana@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0009
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Inativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          28/02/2025
-                        </td>
-                      </tr>
-                      <tr
-                        class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
-                      >
-                        <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                          Lucas Ferreira
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          lucas@example.com
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          (11) 99999-0010
-                        </td>
-                        <td class="px-4 py-3">
-                          <span
-                            class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-1 text-xs font-medium"
-                            >Ativo</span
-                          >
-                        </td>
-                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                          08/04/2025
-                        </td>
+                      <template x-for="row in paged" :key="row.email">
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50">
+                          <td class="px-4 py-3 text-gray-800 dark:text-gray-200" x-text="row.nome"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.email"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.telefone"></td>
+                          <td class="px-4 py-3">
+                            <span
+                              class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                              :class="row.status === 'Ativo'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300'
+                                : 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300'"
+                              x-text="row.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.data"></td>
+                        </tr>
+                      </template>
+                      <tr x-show="paged.length === 0">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum vendedor encontrado.</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
-                <div
-                  class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700"
-                >
+                <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
                   <div class="text-sm text-gray-600 dark:text-gray-400">
-                    Mostrando <span class="font-semibold">1</span> a
-                    <span class="font-semibold">5</span> de
-                    <span class="font-semibold">15</span> vendedores
+                    Mostrando <span class="font-semibold" x-text="start"></span> a
+                    <span class="font-semibold" x-text="end"></span> de
+                    <span class="font-semibold" x-text="filtered.length"></span> vendedores
                   </div>
                   <div class="flex items-center gap-2">
                     <button
                       class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('prev-page-vendedores')"
+                      :disabled="page === 1"
+                      @click="prevPage()"
                     >
                       ← Anterior
                     </button>
                     <div class="flex items-center gap-1">
-                      <button
-                        class="bg-brand-600 dark:bg-brand-500 min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium text-white"
-                      >
-                        1
-                      </button>
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        2
-                      </button>
-                      <button
-                        class="min-w-[2rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                      >
-                        3
-                      </button>
+                      <template x-for="n in pageNumbers" :key="n">
+                        <span class="flex items-center">
+                          <span x-show="showEllipsisBefore(n)" class="px-1 text-gray-600 dark:text-gray-400">…</span>
+                          <button
+                            class="min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium transition-colors"
+                            :class="n === page
+                              ? 'bg-brand-600 dark:bg-brand-500 text-white'
+                              : 'border border-gray-200 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                            @click="page = n"
+                            x-text="n"
+                          ></button>
+                        </span>
+                      </template>
                     </div>
                     <button
-                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-                      @click="$dispatch('next-page-vendedores')"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === totalPages"
+                      @click="nextPage()"
                     >
                       Próximo →
                     </button>

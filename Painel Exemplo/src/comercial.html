@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -27,6 +27,7 @@
         <main>
           <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
             <include src="./partials/dashboard/page-header.html"></include>
+            <include src="./partials/dashboard/export-buttons.html"></include>
 
             <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div
@@ -109,15 +110,15 @@
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Desempenho por Vendedor
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Pipeline de Vendas</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Oportunidades por etapa do funil</p>
                   </div>
+                  <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 dark:bg-brand-500/15 dark:text-brand-300">
+                    Conv. 19%
+                  </span>
                 </div>
                 <div class="max-w-full overflow-x-auto custom-scrollbar">
-                  <div id="chartOne" class="min-w-[400px]"></div>
+                  <div id="commercialFunnelChart" class="w-full"></div>
                 </div>
               </div>
 
@@ -126,15 +127,15 @@
               >
                 <div class="mb-4 flex items-center justify-between">
                   <div>
-                    <h3
-                      class="text-lg font-semibold text-gray-800 dark:text-white/90"
-                    >
-                      Funil de Vendas (Evolução)
-                    </h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Realizado vs Meta</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Evolução mensal de vendas</p>
                   </div>
+                  <span class="inline-flex items-center rounded-full bg-success-50 px-2.5 py-1 text-xs font-medium text-success-700 dark:bg-success-500/15 dark:text-success-300">
+                    +15% YTD
+                  </span>
                 </div>
                 <div class="max-w-full overflow-x-auto custom-scrollbar">
-                  <div id="chartThree" class="min-w-[400px]"></div>
+                  <div id="commercialTrendChart" class="w-full"></div>
                 </div>
               </div>
             </section>

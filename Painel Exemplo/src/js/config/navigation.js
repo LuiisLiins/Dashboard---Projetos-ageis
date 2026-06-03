@@ -35,10 +35,40 @@ const iconMap = {
     </svg>
   `,
   target: (className) => `
-    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"></circle>
-      <circle cx="12" cy="12" r="6"></circle>
-      <circle cx="12" cy="12" r="2"></circle>
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"></circle>
+      <polyline points="8 12.5 11 15.5 16 9"></polyline>
+    </svg>
+  `,
+  logs: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+      <line x1="8" y1="9" x2="16" y2="9"></line>
+      <line x1="8" y1="13" x2="16" y2="13"></line>
+      <line x1="8" y1="17" x2="12" y2="17"></line>
+    </svg>
+  `,
+  calendario: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>
+  `,
+  analytics: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="14" width="4" height="7" rx="1"></rect>
+      <rect x="10" y="9" width="4" height="12" rx="1"></rect>
+      <rect x="17" y="4" width="4" height="17" rx="1"></rect>
+    </svg>
+  `,
+  empresa: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="5" width="16" height="16" rx="1"></rect>
+      <path d="M9 21V11h6v10"></path>
+      <rect x="9" y="7" width="2" height="2" rx="0.5"></rect>
+      <rect x="13" y="7" width="2" height="2" rx="0.5"></rect>
     </svg>
   `,
 };
@@ -305,9 +335,9 @@ export const pageCatalog = {
   },
   "metas": {
     href: "metas.html",
-    groupKey: "metas",
-    groupLabel: "Metas",
-    title: "Gestão de Metas",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Gestão de Metas e OKRs",
     navLabel: "Metas",
     domainLabel: "Estratégico",
     description: "Acompanhe e trace novas metas para a equipe e a empresa.",
@@ -318,6 +348,175 @@ export const pageCatalog = {
     audience: "Diretoria e Gestores",
     cadence: "Mensal e Trimestral",
     badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
+  },
+  estrategico: {
+    href: "estrategico.html",
+    title: "Dashboard Estratégico",
+    navLabel: "Estratégico",
+    domainLabel: "Estratégico",
+    description: "Visão consolidada de desempenho estratégico: OKRs, receita acumulada, ROI e crescimento.",
+    focus: "OKRs e visão de longo prazo",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Sintetiza saúde, risco e tendência para decisões da diretoria e lideranças executivas.",
+    audience: "Diretoria e lideranças executivas",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
+  },
+  financeiro: {
+    href: "financeiro.html",
+    groupLabel: "Financeiro",
+    title: "Dashboard Financeiro",
+    navLabel: "Dashboard",
+    domainLabel: "Financeiro",
+    description: "Receita, despesas, lucro e inadimplência consolidados em um único painel para decisão rápida.",
+    focus: "Fluxo e rentabilidade",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Consolida liquidez, margem e exposição financeira para orientar decisões de priorização e risco.",
+    audience: "Diretoria financeira e controladoria",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-300",
+  },
+  comercial: {
+    href: "comercial.html",
+    groupLabel: "Comercial",
+    title: "Dashboard Comercial",
+    navLabel: "Dashboard",
+    domainLabel: "Comercial",
+    description: "Vendas, pipeline, conversão e performance dos vendedores consolidados por período.",
+    focus: "Receita e conversão",
+    levelKey: "tatico",
+    levelLabel: "Tático",
+    levelDescription: "Orienta a gerência comercial na distribuição de carteira, cobertura de meta e qualidade do pipeline.",
+    audience: "Gerência comercial e líderes de canal",
+    cadence: "Diário e semanal",
+    badgeClass: "bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300",
+  },
+  operacional: {
+    href: "operacional.html",
+    groupLabel: "Operacional",
+    title: "Dashboard Operacional",
+    navLabel: "Dashboard",
+    domainLabel: "Operacional",
+    description: "Pedidos em andamento, concluídos, pendências e tempo médio de atendimento em tempo real.",
+    focus: "Capacidade e execução",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Mostra fila, exceção e ritmo de execução para ação imediata nas operações.",
+    audience: "Supervisão e operação",
+    cadence: "Intradia e diário",
+    badgeClass: "bg-warning-50 text-warning-700 dark:bg-warning-500/15 dark:text-warning-300",
+  },
+  clientes: {
+    href: "clientes.html",
+    groupLabel: "Clientes",
+    title: "Dashboard Clientes",
+    navLabel: "Dashboard",
+    domainLabel: "Clientes",
+    description: "Base de clientes, novos, churn rate, CAC e segmentação por tipo de cliente.",
+    focus: "Retenção e aquisição",
+    levelKey: "tatico",
+    levelLabel: "Tático",
+    levelDescription: "Conecta aquisição, retenção e valor do cliente para decisões de CRM e relacionamento.",
+    audience: "Gerência comercial e marketing",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+  },
+  estoque: {
+    href: "estoque.html",
+    groupLabel: "Estoque",
+    title: "Dashboard Estoque",
+    navLabel: "Dashboard",
+    domainLabel: "Estoque",
+    description: "Valor em estoque, giro, risco de ruptura e prazo médio de reposição por produto.",
+    focus: "Giro e disponibilidade",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Mostra risco imediato de ruptura, reposição e movimentação para ação do time logístico.",
+    audience: "Planejamento logístico e supervisão",
+    cadence: "Intradia e diário",
+    badgeClass: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  },
+  previsao: {
+    href: "previsao.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Previsão de Vendas",
+    navLabel: "Previsão",
+    domainLabel: "Previsão",
+    description: "Projeções de vendas com intervalos de confiança, modelos de IA e planejamentos por período.",
+    focus: "Projeção e planejamento",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Antecipa tendências de receita para orientar decisões de alocação e meta.",
+    audience: "Diretoria e planejamento",
+    cadence: "Mensal e trimestral",
+    badgeClass: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  },
+  logs: {
+    href: "logs.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Logs de Sistema",
+    navLabel: "Logs",
+    domainLabel: "Sistema",
+    description: "Registro de eventos do sistema: ações de usuários, erros, avisos e auditoria.",
+    focus: "Auditoria e monitoramento",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Acompanhamento em tempo real dos eventos críticos para segurança e conformidade.",
+    audience: "TI e administradores",
+    cadence: "Contínuo e intradia",
+    badgeClass: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
+  },
+  calendario: {
+    href: "calendario.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Calendário",
+    navLabel: "Calendário",
+    domainLabel: "Sistema",
+    description: "Visualize e gerencie eventos e compromissos por mês com cores de destaque.",
+    focus: "Agenda e compromissos",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Gestão de agenda e eventos recorrentes.",
+    audience: "Toda a equipe",
+    cadence: "Diário",
+    badgeClass: "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+  },
+  analytics: {
+    href: "analytics.html",
+    groupKey: "analytics",
+    groupLabel: "Analytics",
+    title: "Central de Analytics",
+    navLabel: "Analytics",
+    domainLabel: "Analytics",
+    description: "Tendências, sazonalidade, comparação entre anos e segmentação aprofundada de clientes.",
+    focus: "Análise e inteligência",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Análise histórica e preditiva para decisões estratégicas baseadas em dados.",
+    audience: "Diretoria e analistas",
+    cadence: "Sob demanda",
+    badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
+  },
+  empresa: {
+    href: "empresa.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Detalhes da Empresa",
+    navLabel: "Empresa",
+    domainLabel: "Sistema",
+    description: "Informações gerais, administrativas, comerciais e certificações da empresa.",
+    focus: "Cadastro institucional",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Perfil e configurações institucionais da organização.",
+    audience: "Administração",
+    cadence: "Sob demanda",
+    badgeClass: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
   },
 };
 
