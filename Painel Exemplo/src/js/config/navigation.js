@@ -24,76 +24,103 @@ const iconMap = {
       <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 6C3.25 4.48122 4.48122 3.25 6 3.25H13C14.5188 3.25 15.75 4.48122 15.75 6V6.25H16.5406C17.1893 6.25 17.7958 6.56556 18.1661 7.095L20.8755 10.9656C21.1533 11.3625 21.3022 11.8352 21.3022 12.3197V15C21.3022 15.4142 20.9664 15.75 20.5522 15.75H19.591C19.2525 17.0433 18.0773 18 16.6781 18C15.2789 18 14.1037 17.0433 13.7652 15.75H10.2369C9.89839 17.0433 8.72317 18 7.32397 18C5.92476 18 4.74955 17.0433 4.41102 15.75H3.75C3.33579 15.75 3 15.4142 3 15V6.25L3.25 6ZM15.75 7.75V12.75H19.7706V12.3197C19.7706 12.1478 19.7178 11.9801 19.6192 11.8392L16.9098 7.96856C16.8185 7.83805 16.6689 7.75 16.5092 7.75H15.75ZM14.25 14.25H13.7652C13.8545 13.9087 14.0022 13.5914 14.1972 13.31C14.1393 13.2341 14.0799 13.1593 14.0192 13.0856C13.889 12.9277 13.7997 12.7403 13.7588 12.5398C13.7337 12.4168 13.7249 12.2916 13.7325 12.167V6C13.7325 5.30964 13.1728 4.75 12.4825 4.75H6C5.30964 4.75 4.75 5.30964 4.75 6V14.25H4.41102C4.74955 12.9567 5.92476 12 7.32397 12C8.72317 12 9.89839 12.9567 10.2369 14.25H14.25ZM7.32397 13.5C6.49854 13.5 5.8293 14.1693 5.8293 14.9947C5.8293 15.8201 6.49854 16.4893 7.32397 16.4893C8.14939 16.4893 8.81863 15.8201 8.81863 14.9947C8.81863 14.1693 8.14939 13.5 7.32397 13.5ZM16.6781 13.5C15.8527 13.5 15.1834 14.1693 15.1834 14.9947C15.1834 15.8201 15.8527 16.4893 16.6781 16.4893C17.5035 16.4893 18.1728 15.8201 18.1728 14.9947C18.1728 14.1693 17.5035 13.5 16.6781 13.5Z" fill="currentColor"/>
     </svg>
   `,
+  customers: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C8.68629 2 6 4.68629 6 8C6 11.3137 8.68629 14 12 14C15.3137 14 18 11.3137 18 8C18 4.68629 15.3137 2 12 2ZM7.5 8C7.5 5.51472 9.51472 3.5 12 3.5C14.4853 3.5 16.5 5.51472 16.5 8C16.5 10.4853 14.4853 12.5 12 12.5C9.51472 12.5 7.5 10.4853 7.5 8ZM4.62939 21C4.33158 19.3879 5.09355 17.8106 6.4529 16.945C8.08316 15.9069 10.0076 15.5 12 15.5C13.9924 15.5 15.9168 15.9069 17.5471 16.945C18.9065 17.8106 19.6684 19.3879 19.3706 21H20.893C21.229 18.8923 20.1706 16.8209 18.3512 15.662C16.4862 14.4746 14.2818 14 12 14C9.71822 14 7.51382 14.4746 5.64878 15.662C3.82944 16.8209 2.77098 18.8923 3.10703 21H4.62939Z" fill="currentColor"/>
+    </svg>
+  `,
+  forecast: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 19C3.25 18.5858 3.58579 18.25 4 18.25H20C20.4142 18.25 20.75 18.5858 20.75 19C20.75 19.4142 20.4142 19.75 20 19.75H4C3.58579 19.75 3.25 19.4142 3.25 19ZM6.25 14C6.25 13.5858 6.58579 13.25 7 13.25C7.41421 13.25 7.75 13.5858 7.75 14V19C7.75 19.4142 7.41421 19.75 7 19.75C6.58579 19.75 6.25 19.4142 6.25 19V14ZM11.75 10V19C11.75 19.4142 11.4142 19.75 11 19.75C10.5858 19.75 10.25 19.4142 10.25 19V10C10.25 9.58579 10.5858 9.25 11 9.25C11.4142 9.25 11.75 9.58579 11.75 10ZM16.75 5V19C16.75 19.4142 16.4142 19.75 16 19.75C15.5858 19.75 15.25 19.4142 15.25 19V5C15.25 4.58579 15.5858 4.25 16 4.25C16.4142 4.25 16.75 4.58579 16.75 5ZM18.5303 3.96967C18.8232 4.26256 18.8232 4.73744 18.5303 5.03033L16.5303 7.03033C16.2374 7.32322 15.7626 7.32322 15.4697 7.03033L13.75 5.31066L11.53 7.53C11.2371 7.82289 10.7623 7.82289 10.4694 7.53C10.1765 7.23711 10.1765 6.76223 10.4694 6.46934L13.22 3.71868C13.5129 3.42579 13.9878 3.42579 14.2807 3.71868L16 5.43934L17.4697 3.96967C17.7626 3.67678 18.2374 3.67678 18.5303 3.96967Z" fill="currentColor"/>
+    </svg>
+  `,
+  target: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"></circle>
+      <polyline points="8 12.5 11 15.5 16 9"></polyline>
+    </svg>
+  `,
+  logs: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+      <line x1="8" y1="9" x2="16" y2="9"></line>
+      <line x1="8" y1="13" x2="16" y2="13"></line>
+      <line x1="8" y1="17" x2="12" y2="17"></line>
+    </svg>
+  `,
+  calendario: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>
+  `,
+  analytics: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="14" width="4" height="7" rx="1"></rect>
+      <rect x="10" y="9" width="4" height="12" rx="1"></rect>
+      <rect x="17" y="4" width="4" height="17" rx="1"></rect>
+    </svg>
+  `,
+  empresa: (className) => `
+    <svg class="${className}" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="5" width="16" height="16" rx="1"></rect>
+      <path d="M9 21V11h6v10"></path>
+      <rect x="9" y="7" width="2" height="2" rx="0.5"></rect>
+      <rect x="13" y="7" width="2" height="2" rx="0.5"></rect>
+    </svg>
+  `,
 };
 
 export const navigationGroups = [
   {
+    key: "estrategico",
+    label: "Estratégico",
+    icon: "overview",
+    href: "estrategico.html",
+  },
+  {
+    key: "operacional",
+    label: "Operacional",
+    icon: "operations",
+    href: "operacional.html",
+  },
+  {
     key: "financeiro",
     label: "Financeiro",
     icon: "finance",
-    pages: [
-      {
-        key: "financeiro-dashboard",
-        label: "Visao geral",
-        href: "financeiro-dashboard.html",
-      },
-      {
-        key: "financeiro-fluxo-caixa",
-        label: "Fluxo de caixa",
-        href: "financeiro-fluxo-caixa.html",
-      },
-    ],
+    href: "financeiro.html",
   },
   {
     key: "comercial",
     label: "Comercial",
     icon: "sales",
-    pages: [
-      {
-        key: "comercial-dashboard",
-        label: "Visao de vendas",
-        href: "comercial-dashboard.html",
-      },
-      {
-        key: "comercial-pipeline",
-        label: "Pipeline",
-        href: "comercial-pipeline.html",
-      },
-    ],
+    href: "comercial.html",
   },
   {
-    key: "operacoes",
-    label: "Operacoes",
-    icon: "operations",
-    pages: [
-      {
-        key: "operacoes-dashboard",
-        label: "Visao operacional",
-        href: "operacoes-dashboard.html",
-      },
-      {
-        key: "operacoes-produtividade",
-        label: "Produtividade",
-        href: "operacoes-produtividade.html",
-      },
-    ],
+    key: "clientes",
+    label: "Clientes",
+    icon: "customers",
+    href: "clientes.html",
   },
   {
-    key: "logistica",
-    label: "Logistica",
+    key: "estoque",
+    label: "Estoque",
     icon: "logistics",
-    pages: [
-      {
-        key: "logistica-dashboard",
-        label: "Visao logistica",
-        href: "logistica-dashboard.html",
-      },
-      {
-        key: "logistica-estoque",
-        label: "Estoque",
-        href: "logistica-estoque.html",
-      },
-    ],
+    href: "estoque.html",
+  },
+  {
+    key: "previsao",
+    label: "Previsão",
+    icon: "forecast",
+    href: "previsao.html",
+  },
+  {
+    key: "metas",
+    label: "Metas e OKRs",
+    icon: "target",
+    href: "metas.html",
   },
 ];
 
@@ -305,6 +332,191 @@ export const pageCatalog = {
     cadence: "Intradia e diario",
     badgeClass:
       "bg-orange-50 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
+  },
+  "metas": {
+    href: "metas.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Gestão de Metas e OKRs",
+    navLabel: "Metas",
+    domainLabel: "Estratégico",
+    description: "Acompanhe e trace novas metas para a equipe e a empresa.",
+    focus: "Metas e Resultados Chave",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Visão consolidada do atingimento de metas para alinhamento estratégico.",
+    audience: "Diretoria e Gestores",
+    cadence: "Mensal e Trimestral",
+    badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
+  },
+  estrategico: {
+    href: "estrategico.html",
+    title: "Dashboard Estratégico",
+    navLabel: "Estratégico",
+    domainLabel: "Estratégico",
+    description: "Visão consolidada de desempenho estratégico: OKRs, receita acumulada, ROI e crescimento.",
+    focus: "OKRs e visão de longo prazo",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Sintetiza saúde, risco e tendência para decisões da diretoria e lideranças executivas.",
+    audience: "Diretoria e lideranças executivas",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
+  },
+  financeiro: {
+    href: "financeiro.html",
+    groupLabel: "Financeiro",
+    title: "Dashboard Financeiro",
+    navLabel: "Dashboard",
+    domainLabel: "Financeiro",
+    description: "Receita, despesas, lucro e inadimplência consolidados em um único painel para decisão rápida.",
+    focus: "Fluxo e rentabilidade",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Consolida liquidez, margem e exposição financeira para orientar decisões de priorização e risco.",
+    audience: "Diretoria financeira e controladoria",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-300",
+  },
+  comercial: {
+    href: "comercial.html",
+    groupLabel: "Comercial",
+    title: "Dashboard Comercial",
+    navLabel: "Dashboard",
+    domainLabel: "Comercial",
+    description: "Vendas, pipeline, conversão e performance dos vendedores consolidados por período.",
+    focus: "Receita e conversão",
+    levelKey: "tatico",
+    levelLabel: "Tático",
+    levelDescription: "Orienta a gerência comercial na distribuição de carteira, cobertura de meta e qualidade do pipeline.",
+    audience: "Gerência comercial e líderes de canal",
+    cadence: "Diário e semanal",
+    badgeClass: "bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300",
+  },
+  operacional: {
+    href: "operacional.html",
+    groupLabel: "Operacional",
+    title: "Dashboard Operacional",
+    navLabel: "Dashboard",
+    domainLabel: "Operacional",
+    description: "Pedidos em andamento, concluídos, pendências e tempo médio de atendimento em tempo real.",
+    focus: "Capacidade e execução",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Mostra fila, exceção e ritmo de execução para ação imediata nas operações.",
+    audience: "Supervisão e operação",
+    cadence: "Intradia e diário",
+    badgeClass: "bg-warning-50 text-warning-700 dark:bg-warning-500/15 dark:text-warning-300",
+  },
+  clientes: {
+    href: "clientes.html",
+    groupLabel: "Clientes",
+    title: "Dashboard Clientes",
+    navLabel: "Dashboard",
+    domainLabel: "Clientes",
+    description: "Base de clientes, novos, churn rate, CAC e segmentação por tipo de cliente.",
+    focus: "Retenção e aquisição",
+    levelKey: "tatico",
+    levelLabel: "Tático",
+    levelDescription: "Conecta aquisição, retenção e valor do cliente para decisões de CRM e relacionamento.",
+    audience: "Gerência comercial e marketing",
+    cadence: "Semanal e mensal",
+    badgeClass: "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+  },
+  estoque: {
+    href: "estoque.html",
+    groupLabel: "Estoque",
+    title: "Dashboard Estoque",
+    navLabel: "Dashboard",
+    domainLabel: "Estoque",
+    description: "Valor em estoque, giro, risco de ruptura e prazo médio de reposição por produto.",
+    focus: "Giro e disponibilidade",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Mostra risco imediato de ruptura, reposição e movimentação para ação do time logístico.",
+    audience: "Planejamento logístico e supervisão",
+    cadence: "Intradia e diário",
+    badgeClass: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  },
+  previsao: {
+    href: "previsao.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Previsão de Vendas",
+    navLabel: "Previsão",
+    domainLabel: "Previsão",
+    description: "Projeções de vendas com intervalos de confiança, modelos de IA e planejamentos por período.",
+    focus: "Projeção e planejamento",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Antecipa tendências de receita para orientar decisões de alocação e meta.",
+    audience: "Diretoria e planejamento",
+    cadence: "Mensal e trimestral",
+    badgeClass: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  },
+  logs: {
+    href: "logs.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Logs de Sistema",
+    navLabel: "Logs",
+    domainLabel: "Sistema",
+    description: "Registro de eventos do sistema: ações de usuários, erros, avisos e auditoria.",
+    focus: "Auditoria e monitoramento",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Acompanhamento em tempo real dos eventos críticos para segurança e conformidade.",
+    audience: "TI e administradores",
+    cadence: "Contínuo e intradia",
+    badgeClass: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
+  },
+  calendario: {
+    href: "calendario.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Calendário",
+    navLabel: "Calendário",
+    domainLabel: "Sistema",
+    description: "Visualize e gerencie eventos e compromissos por mês com cores de destaque.",
+    focus: "Agenda e compromissos",
+    levelKey: "operacional",
+    levelLabel: "Operacional",
+    levelDescription: "Gestão de agenda e eventos recorrentes.",
+    audience: "Toda a equipe",
+    cadence: "Diário",
+    badgeClass: "bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300",
+  },
+  analytics: {
+    href: "analytics.html",
+    groupKey: "analytics",
+    groupLabel: "Analytics",
+    title: "Central de Analytics",
+    navLabel: "Analytics",
+    domainLabel: "Analytics",
+    description: "Tendências, sazonalidade, comparação entre anos e segmentação aprofundada de clientes.",
+    focus: "Análise e inteligência",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Análise histórica e preditiva para decisões estratégicas baseadas em dados.",
+    audience: "Diretoria e analistas",
+    cadence: "Sob demanda",
+    badgeClass: "bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
+  },
+  empresa: {
+    href: "empresa.html",
+    groupKey: "sistema",
+    groupLabel: "Sistema",
+    title: "Detalhes da Empresa",
+    navLabel: "Empresa",
+    domainLabel: "Sistema",
+    description: "Informações gerais, administrativas, comerciais e certificações da empresa.",
+    focus: "Cadastro institucional",
+    levelKey: "estrategico",
+    levelLabel: "Estratégico",
+    levelDescription: "Perfil e configurações institucionais da organização.",
+    audience: "Administração",
+    cadence: "Sob demanda",
+    badgeClass: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/80",
   },
 };
 

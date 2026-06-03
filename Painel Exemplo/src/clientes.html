@@ -1,0 +1,623 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dashboard Clientes | Dashboard Multidominio</title>
+  </head>
+  <body
+    x-data="{
+      ...createAppShell('clientes'),
+      async exportarRelatorio(format) {
+        const pageMeta = Alpine.store('navigation').getPageMeta(this.page);
+        const clientes = [
+          { nome: 'João Silva',      email: 'joao@example.com',      telefone: '(11) 99999-0001', status: 'Ativo',    data: '15/01/2025' },
+          { nome: 'Pedro Oliveira',  email: 'pedro@example.com',     telefone: '(11) 99999-0003', status: 'Ativo',    data: '10/03/2025' },
+          { nome: 'Carlos Mendes',   email: 'carlos@example.com',    telefone: '(11) 99999-0005', status: 'Inativo',  data: '12/05/2025' },
+          { nome: 'Beatriz Lima',    email: 'beatriz@example.com',   telefone: '(11) 99999-0006', status: 'Ativo',    data: '22/04/2025' },
+          { nome: 'Fernando Gomes',  email: 'fernando@example.com',  telefone: '(11) 99999-0007', status: 'Ativo',    data: '01/05/2025' },
+          { nome: 'Luciana Pereira', email: 'luciana@example.com',   telefone: '(11) 99999-0011', status: 'Ativo',    data: '14/06/2025' },
+          { nome: 'Rafael Souza',    email: 'rafael@example.com',    telefone: '(11) 99999-0012', status: 'Ativo',    data: '30/06/2025' },
+          { nome: 'Camila Torres',   email: 'camila@example.com',    telefone: '(11) 99999-0013', status: 'Inativo',  data: '07/07/2025' },
+          { nome: 'Thiago Barbosa',  email: 'thiago@example.com',    telefone: '(11) 99999-0014', status: 'Ativo',    data: '19/07/2025' },
+          { nome: 'Priscila Neves',  email: 'priscila@example.com',  telefone: '(11) 99999-0015', status: 'Ativo',    data: '25/08/2025' },
+          { nome: 'Marcos Ribeiro',  email: 'marcos@example.com',    telefone: '(11) 99999-0016', status: 'Ativo',    data: '03/09/2025' },
+          { nome: 'Vanessa Cardoso', email: 'vanessa@example.com',   telefone: '(11) 99999-0017', status: 'Inativo',  data: '17/09/2025' },
+          { nome: 'Eduardo Pinto',   email: 'eduardo@example.com',   telefone: '(11) 99999-0018', status: 'Ativo',    data: '08/10/2025' },
+          { nome: 'Patrícia Moura',  email: 'patricia@example.com',  telefone: '(11) 99999-0019', status: 'Ativo',    data: '21/10/2025' },
+          { nome: 'Diego Carvalho',  email: 'diego@example.com',     telefone: '(11) 99999-0020', status: 'Ativo',    data: '05/11/2025' },
+        ];
+        const vendedores = [
+          { nome: 'Maria Santos',    email: 'maria@example.com',     telefone: '(11) 99999-0002', status: 'Ativo',    data: '20/02/2025' },
+          { nome: 'Ana Costa',       email: 'ana@example.com',       telefone: '(11) 99999-0004', status: 'Ativo',    data: '05/04/2025' },
+          { nome: 'Roberto Alves',   email: 'roberto@example.com',   telefone: '(11) 99999-0008', status: 'Ativo',    data: '18/03/2025' },
+          { nome: 'Juliana Rocha',   email: 'juliana@example.com',   telefone: '(11) 99999-0009', status: 'Inativo',  data: '28/02/2025' },
+          { nome: 'Lucas Ferreira',  email: 'lucas@example.com',     telefone: '(11) 99999-0010', status: 'Ativo',    data: '08/04/2025' },
+          { nome: 'Fernanda Dias',   email: 'fernanda@example.com',  telefone: '(11) 99999-0021', status: 'Ativo',    data: '12/04/2025' },
+          { nome: 'Rodrigo Lima',    email: 'rodrigo@example.com',   telefone: '(11) 99999-0022', status: 'Ativo',    data: '27/05/2025' },
+          { nome: 'Tatiane Melo',    email: 'tatiane@example.com',   telefone: '(11) 99999-0023', status: 'Inativo',  data: '11/06/2025' },
+          { nome: 'Gustavo Cunha',   email: 'gustavo@example.com',   telefone: '(11) 99999-0024', status: 'Ativo',    data: '02/07/2025' },
+          { nome: 'Renata Faria',    email: 'renata@example.com',    telefone: '(11) 99999-0025', status: 'Ativo',    data: '16/08/2025' },
+        ];
+        await generateReport('clientes', { ...this.dashboardData, clientes, vendedores }, pageMeta, format);
+      }
+    }"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <include src="./partials/preloader.html"></include>
+
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <include src="./partials/dashboard/page-header.html"></include>
+            <include src="./partials/dashboard/export-buttons.html"></include>
+
+            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Total de Clientes</span
+                  >
+                  <span
+                    class="bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="formatNumber(dashboardData.kpis.clientes_ativos)"
+                    ></h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      >+12% este ano</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Clientes Novos (Mês)</span
+                  >
+                  <span
+                    class="bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                      ></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="formatNumber(dashboardData.kpis.novos_clientes)"
+                    ></h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      >+5% vs meta</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    Custo de Aquisição (CAC)
+                    <button
+                      @click.prevent="$dispatch('open-info-modal', { term: 'CAC (Custo de Aquisição de Clientes)', description: 'O investimento médio necessário em marketing e vendas para atrair e conquistar um novo cliente.' })"
+                      class="hover:text-brand-500 text-gray-400 transition-colors"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                    </button>
+                  </span>
+                  <span
+                    class="bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                      ></path>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      R$
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.cac_medio, 2)"
+                      ></span>
+                    </h4>
+                    <span
+                      class="text-warning-500 mt-1 flex items-center gap-1 text-sm"
+                    >
+                      LTV/CAC: 3.5x
+                      <button
+                        @click.prevent="$dispatch('open-info-modal', { term: 'LTV (Lifetime Value)', description: 'Valor do Ciclo de Vida. É a estimativa da receita média que um cliente gera ao longo de todo o tempo em que mantém relacionamento com a empresa.' })"
+                        class="hover:text-warning-500 text-gray-400 transition-colors"
+                      >
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="flex items-center gap-1 text-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    Churn Rate
+                    <button
+                      @click.prevent="$dispatch('open-info-modal', { term: 'Churn Rate (Taxa de Cancelamento)', description: 'Porcentagem de clientes que cancelaram o serviço ou deixaram de comprar em um determinado período.' })"
+                      class="hover:text-brand-500 text-gray-400 transition-colors"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                    </button>
+                  </span>
+                  <span
+                    class="bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                      ></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                    >
+                      <span
+                        x-text="formatNumber(dashboardData.kpis.churn_rate, 1)"
+                      ></span
+                      >%
+                    </h4>
+                    <span
+                      class="text-error-500 mt-1 flex items-center gap-1 text-sm text-red-500"
+                      >+0.5% este mês</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-4 xl:grid-cols-3">
+              <div
+                class="xl:col-span-2 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Evolução da Base de Clientes</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Ativos, novos e perdidos por mês</p>
+                  </div>
+                  <span class="inline-flex items-center rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-300">
+                    +37.8% YTD
+                  </span>
+                </div>
+                <div class="w-full">
+                  <div id="clientsGrowthChart" class="w-full"></div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Segmentos</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Distribuição por tipo de cliente</p>
+                  </div>
+                </div>
+                <div class="w-full">
+                  <div id="clientsSegmentChart"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-4">
+              <!-- Lista de Clientes -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                x-data="{
+                  allRows: [
+                    { nome: 'João Silva', email: 'joao@example.com', telefone: '(11) 99999-0001', status: 'Ativo', data: '15/01/2025' },
+                    { nome: 'Pedro Oliveira', email: 'pedro@example.com', telefone: '(11) 99999-0003', status: 'Ativo', data: '10/03/2025' },
+                    { nome: 'Carlos Mendes', email: 'carlos@example.com', telefone: '(11) 99999-0005', status: 'Inativo', data: '12/05/2025' },
+                    { nome: 'Beatriz Lima', email: 'beatriz@example.com', telefone: '(11) 99999-0006', status: 'Ativo', data: '22/04/2025' },
+                    { nome: 'Fernando Gomes', email: 'fernando@example.com', telefone: '(11) 99999-0007', status: 'Ativo', data: '01/05/2025' },
+                    { nome: 'Luciana Pereira', email: 'luciana@example.com', telefone: '(11) 99999-0011', status: 'Ativo', data: '14/06/2025' },
+                    { nome: 'Rafael Souza', email: 'rafael@example.com', telefone: '(11) 99999-0012', status: 'Ativo', data: '30/06/2025' },
+                    { nome: 'Camila Torres', email: 'camila@example.com', telefone: '(11) 99999-0013', status: 'Inativo', data: '07/07/2025' },
+                    { nome: 'Thiago Barbosa', email: 'thiago@example.com', telefone: '(11) 99999-0014', status: 'Ativo', data: '19/07/2025' },
+                    { nome: 'Priscila Neves', email: 'priscila@example.com', telefone: '(11) 99999-0015', status: 'Ativo', data: '25/08/2025' },
+                    { nome: 'Marcos Ribeiro', email: 'marcos@example.com', telefone: '(11) 99999-0016', status: 'Ativo', data: '03/09/2025' },
+                    { nome: 'Vanessa Cardoso', email: 'vanessa@example.com', telefone: '(11) 99999-0017', status: 'Inativo', data: '17/09/2025' },
+                    { nome: 'Eduardo Pinto', email: 'eduardo@example.com', telefone: '(11) 99999-0018', status: 'Ativo', data: '08/10/2025' },
+                    { nome: 'Patrícia Moura', email: 'patricia@example.com', telefone: '(11) 99999-0019', status: 'Ativo', data: '21/10/2025' },
+                    { nome: 'Diego Carvalho', email: 'diego@example.com', telefone: '(11) 99999-0020', status: 'Ativo', data: '05/11/2025' }
+                  ],
+                  search: '',
+                  page: 1,
+                  perPage: 5,
+                  get filtered() {
+                    const q = this.search.toLowerCase();
+                    if (!q) return this.allRows;
+                    return this.allRows.filter(r =>
+                      r.nome.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)
+                    );
+                  },
+                  get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
+                  get paged() { return this.filtered.slice((this.page - 1) * this.perPage, this.page * this.perPage); },
+                  get start() { return this.filtered.length === 0 ? 0 : (this.page - 1) * this.perPage + 1; },
+                  get end() { return Math.min(this.page * this.perPage, this.filtered.length); },
+                  get pageNumbers() {
+                    const total = this.totalPages;
+                    const cur = this.page;
+                    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+                    const pages = new Set([1, total, cur]);
+                    if (cur > 1) pages.add(cur - 1);
+                    if (cur < total) pages.add(cur + 1);
+                    return Array.from(pages).sort((a, b) => a - b);
+                  },
+                  showEllipsisBefore(n) {
+                    const nums = this.pageNumbers;
+                    const idx = nums.indexOf(n);
+                    return idx > 0 && nums[idx - 1] !== n - 1;
+                  },
+                  prevPage() { if (this.page > 1) this.page--; },
+                  nextPage() { if (this.page < this.totalPages) this.page++; }
+                }"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Lista de Clientes</h3>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Buscar clientes..."
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      x-model="search"
+                      @input="page = 1"
+                    />
+                  </div>
+                </div>
+
+                <div class="w-full">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Nome</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Telefone</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Data de Cadastro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="row in paged" :key="row.email">
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50">
+                          <td class="px-4 py-3 text-gray-800 dark:text-gray-200" x-text="row.nome"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.email"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.telefone"></td>
+                          <td class="px-4 py-3">
+                            <span
+                              class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                              :class="row.status === 'Ativo'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300'
+                                : 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300'"
+                              x-text="row.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.data"></td>
+                        </tr>
+                      </template>
+                      <tr x-show="paged.length === 0">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum cliente encontrado.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Mostrando <span class="font-semibold" x-text="start"></span> a
+                    <span class="font-semibold" x-text="end"></span> de
+                    <span class="font-semibold" x-text="filtered.length"></span> clientes
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === 1"
+                      @click="prevPage()"
+                    >
+                      ← Anterior
+                    </button>
+                    <div class="flex items-center gap-1">
+                      <template x-for="n in pageNumbers" :key="n">
+                        <span class="flex items-center">
+                          <span x-show="showEllipsisBefore(n)" class="px-1 text-gray-600 dark:text-gray-400">…</span>
+                          <button
+                            class="min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium transition-colors"
+                            :class="n === page
+                              ? 'bg-brand-600 dark:bg-brand-500 text-white'
+                              : 'border border-gray-200 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                            @click="page = n"
+                            x-text="n"
+                          ></button>
+                        </span>
+                      </template>
+                    </div>
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === totalPages"
+                      @click="nextPage()"
+                    >
+                      Próximo →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de Vendedores -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+                x-data="{
+                  allRows: [
+                    { nome: 'Maria Santos', email: 'maria@example.com', telefone: '(11) 99999-0002', status: 'Ativo', data: '20/02/2025' },
+                    { nome: 'Ana Costa', email: 'ana@example.com', telefone: '(11) 99999-0004', status: 'Ativo', data: '05/04/2025' },
+                    { nome: 'Roberto Alves', email: 'roberto@example.com', telefone: '(11) 99999-0008', status: 'Ativo', data: '18/03/2025' },
+                    { nome: 'Juliana Rocha', email: 'juliana@example.com', telefone: '(11) 99999-0009', status: 'Inativo', data: '28/02/2025' },
+                    { nome: 'Lucas Ferreira', email: 'lucas@example.com', telefone: '(11) 99999-0010', status: 'Ativo', data: '08/04/2025' },
+                    { nome: 'Fernanda Dias', email: 'fernanda@example.com', telefone: '(11) 99999-0021', status: 'Ativo', data: '12/04/2025' },
+                    { nome: 'Rodrigo Lima', email: 'rodrigo@example.com', telefone: '(11) 99999-0022', status: 'Ativo', data: '27/05/2025' },
+                    { nome: 'Tatiane Melo', email: 'tatiane@example.com', telefone: '(11) 99999-0023', status: 'Inativo', data: '11/06/2025' },
+                    { nome: 'Gustavo Cunha', email: 'gustavo@example.com', telefone: '(11) 99999-0024', status: 'Ativo', data: '02/07/2025' },
+                    { nome: 'Renata Faria', email: 'renata@example.com', telefone: '(11) 99999-0025', status: 'Ativo', data: '16/08/2025' }
+                  ],
+                  search: '',
+                  page: 1,
+                  perPage: 5,
+                  get filtered() {
+                    const q = this.search.toLowerCase();
+                    if (!q) return this.allRows;
+                    return this.allRows.filter(r =>
+                      r.nome.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)
+                    );
+                  },
+                  get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
+                  get paged() { return this.filtered.slice((this.page - 1) * this.perPage, this.page * this.perPage); },
+                  get start() { return this.filtered.length === 0 ? 0 : (this.page - 1) * this.perPage + 1; },
+                  get end() { return Math.min(this.page * this.perPage, this.filtered.length); },
+                  get pageNumbers() {
+                    const total = this.totalPages;
+                    const cur = this.page;
+                    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+                    const pages = new Set([1, total, cur]);
+                    if (cur > 1) pages.add(cur - 1);
+                    if (cur < total) pages.add(cur + 1);
+                    return Array.from(pages).sort((a, b) => a - b);
+                  },
+                  showEllipsisBefore(n) {
+                    const nums = this.pageNumbers;
+                    const idx = nums.indexOf(n);
+                    return idx > 0 && nums[idx - 1] !== n - 1;
+                  },
+                  prevPage() { if (this.page > 1) this.page--; },
+                  nextPage() { if (this.page < this.totalPages) this.page++; }
+                }"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Lista de Vendedores</h3>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Buscar vendedores..."
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                      x-model="search"
+                      @input="page = 1"
+                    />
+                  </div>
+                </div>
+
+                <div class="w-full">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Nome</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Telefone</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Data de Cadastro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="row in paged" :key="row.email">
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50">
+                          <td class="px-4 py-3 text-gray-800 dark:text-gray-200" x-text="row.nome"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.email"></td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.telefone"></td>
+                          <td class="px-4 py-3">
+                            <span
+                              class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                              :class="row.status === 'Ativo'
+                                ? 'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300'
+                                : 'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300'"
+                              x-text="row.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3 text-gray-600 dark:text-gray-400" x-text="row.data"></td>
+                        </tr>
+                      </template>
+                      <tr x-show="paged.length === 0">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">Nenhum vendedor encontrado.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
+                  <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Mostrando <span class="font-semibold" x-text="start"></span> a
+                    <span class="font-semibold" x-text="end"></span> de
+                    <span class="font-semibold" x-text="filtered.length"></span> vendedores
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === 1"
+                      @click="prevPage()"
+                    >
+                      ← Anterior
+                    </button>
+                    <div class="flex items-center gap-1">
+                      <template x-for="n in pageNumbers" :key="n">
+                        <span class="flex items-center">
+                          <span x-show="showEllipsisBefore(n)" class="px-1 text-gray-600 dark:text-gray-400">…</span>
+                          <button
+                            class="min-w-[2rem] rounded-lg px-2 py-2 text-sm font-medium transition-colors"
+                            :class="n === page
+                              ? 'bg-brand-600 dark:bg-brand-500 text-white'
+                              : 'border border-gray-200 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                            @click="page = n"
+                            x-text="n"
+                          ></button>
+                        </span>
+                      </template>
+                    </div>
+                    <button
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                      :disabled="page === totalPages"
+                      @click="nextPage()"
+                    >
+                      Próximo →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

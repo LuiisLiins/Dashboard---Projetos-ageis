@@ -1,0 +1,84 @@
+﻿<div
+  x-data="{
+    isOpen: false,
+    productIds: [],
+    selectedProducts: [],
+    attributes: [],
+    openModal(data) {
+      this.productIds = data?.productIds || [];
+      this.loadCompareData();
+      this.isOpen = true;
+    },
+    loadCompareData() {
+      const allProducts = {
+        1: { id: 1, nome: 'Notebook Dell Inspiron 15', sku: 'SKU-001', categoria: 'Eletrônicos', quantidade: 45, preco_unitario: 3500 },
+        2: { id: 2, nome: 'Mouse Logitech MX Master', sku: 'SKU-002', categoria: 'Periféricos', quantidade: 128, preco_unitario: 280 },
+        3: { id: 3, nome: 'Teclado Mecânico RGB', sku: 'SKU-003', categoria: 'Periféricos', quantidade: 23, preco_unitario: 450 },
+        4: { id: 4, nome: 'Monitor LG 27\" 4K', sku: 'SKU-004', categoria: 'Monitores', quantidade: 18, preco_unitario: 1800 },
+        5: { id: 5, nome: 'Webcam HD 1080p', sku: 'SKU-005', categoria: 'Periféricos', quantidade: 5, preco_unitario: 320 },
+        6: { id: 6, nome: 'Headphone Gamer', sku: 'SKU-006', categoria: 'Áudio', quantidade: 67, preco_unitario: 420 }
+      };
+      
+      this.selectedProducts = this.productIds.map(id => allProducts[Number(id)]).filter(p => p);
+      
+      const allKeys = new Set();
+      this.selectedProducts.forEach(p => {
+        if (p) Object.keys(p).forEach(k => allKeys.add(k));
+      });
+      this.attributes = Array.from(allKeys).filter(k => k !== 'id').sort();
+    },
+    getAttributeClass(attrName) {
+      const values = this.selectedProducts.map(p => p[attrName]);
+      const allSame = values.every(v => v === values[0]);
+      return allSame ? 'text-gray-600' : 'text-red-600 font-bold';
+    },
+    formatValue(value) {
+      if (typeof value === 'number') {
+        return 'R$ ' + value.toFixed(2).replace('.', ',');
+      }
+      return String(value);
+    }
+  }"
+  @open-compare-modal.window="openModal($event.detail)"
+  x-show="isOpen"
+  style="display: none;"
+  @click="if ($event.target === $el) isOpen = false"
+  class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-white dark:bg-gray-900 rounded-lg shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center">
+      <h2 class="text-2xl font-bold dark:text-white">Comparação de Produtos</h2>
+      <button @click="isOpen = false" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <template x-for="product in selectedProducts" :key="product.id">
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 dark:bg-gray-800">
+          <h3 class="font-bold text-lg dark:text-white" x-text="product.nome"></h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            <span x-text="product.sku"></span> • <span x-text="product.categoria"></span>
+          </p>
+          
+          <div class="mt-4 space-y-2">
+            <template x-for="attr in attributes" :key="attr">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600 dark:text-gray-400 capitalize" x-text="attr.replace(/_/g, ' ')"></span>
+                <span :class="getAttributeClass(attr)" x-text="attr.includes('preco') ? formatValue(product[attr]) : product[attr]"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div class="border-t border-gray-200 dark:border-gray-700 p-6 flex justify-end gap-2">
+      <button @click="isOpen = false" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-medium dark:bg-brand-500">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>

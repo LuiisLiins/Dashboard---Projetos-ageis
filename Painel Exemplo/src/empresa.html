@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Detalhes da Empresa | Dashboard Multidominio</title>
+  </head>
+  <body
+    x-data="{
+      ...createAppShell('empresa'),
+      editMode: false,
+      empresa: {
+        nome_fantasia: 'UNIMAR',
+        razao_social: 'UNIMAR Sistemas',
+        cnpj: '12.345.678/0001-90',
+        inscricao_estadual: '123.456.789.012',
+        setor: 'Tecnologia da Informação',
+        data_fundacao: '10 de maio de 2006',
+        descricao: 'Empresa especializada em desenvolvimento de software e vendas de produtos eletrônicos, oferecendo consultoria empresarial e soluções digitais customizadas para empresas de médio e grande porte.',
+        endereco: 'Av. Higino Muzi Filho, 1001',
+        cidade_uf_cep: 'Mirante, Marília - SP, 17525-902',
+        telefone: '(11) 1111-1111',
+        email: 'contato@unimar.com.br',
+        website: 'www.unimar.com.br',
+        faturamento_anual: 'R$ 18.5M',
+        funcionarios: 245,
+        clientes_ativos: 87,
+        filiais: 3,
+        proprietario: 'Presidente UNIMAR',
+        responsavel_tecnico: 'Responsável Técnico UNIMAR',
+        gerente_financeiro: 'Gerente Financeiro UNIMAR',
+        certificacoes: ['Certificado 1', 'Certificado 2', 'Certificado 3']
+      },
+      _snapshot: null,
+      startEdit() {
+        this._snapshot = JSON.parse(JSON.stringify(this.empresa));
+        this.editMode = true;
+      },
+      cancelEdit() {
+        this.empresa = JSON.parse(JSON.stringify(this._snapshot));
+        this.editMode = false;
+      },
+      saveEdit() {
+        try { localStorage.setItem('empresa_data', JSON.stringify(this.empresa)); } catch(e) {}
+        this.editMode = false;
+      },
+      async downloadReport(format) {
+        const pageMeta = Alpine.store('navigation').getPageMeta(this.page);
+        await generateReport(this.page, { ...this.dashboardData, empresa: this.empresa }, pageMeta, format);
+      },
+      addCertificacao() {
+        this.empresa.certificacoes.push('');
+      },
+      removeCertificacao(idx) {
+        this.empresa.certificacoes.splice(idx, 1);
+      }
+    }"
+    x-init="
+      init();
+      try {
+        const saved = localStorage.getItem('empresa_data');
+        if (saved) empresa = { ...empresa, ...JSON.parse(saved) };
+      } catch(e) {}
+    "
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <include src="./partials/preloader.html"></include>
+
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+
+            <!-- Cabeçalho da página -->
+            <div class="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                  Detalhes da Empresa
+                </h1>
+                <p class="mt-1 text-gray-600 dark:text-gray-400">
+                  Informações gerais e administrativas
+                </p>
+              </div>
+
+              <!-- Botões de ação -->
+              <div class="flex shrink-0 items-center gap-2">
+                <!-- Exportar -->
+              <div x-data="{ open: false }" class="relative">
+                <button
+                  @click="open = !open"
+                  @keydown.escape.window="open = false"
+                  class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Exportar
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" :class="open ? 'rotate-180' : ''" class="transition-transform"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div
+                  x-show="open"
+                  x-transition:enter="transition ease-out duration-100"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-75"
+                  x-transition:leave-start="opacity-100 scale-100"
+                  x-transition:leave-end="opacity-0 scale-95"
+                  @click.outside="open = false"
+                  class="absolute right-0 top-full z-40 mt-1 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <button
+                    @click="downloadReport('pdf'); open = false"
+                    class="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Exportar como PDF
+                  </button>
+                  <button
+                    @click="downloadReport('word'); open = false"
+                    class="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Exportar como Word
+                  </button>
+                </div>
+              </div>
+
+              <!-- Modo visualização -->
+                <button
+                  x-show="!editMode"
+                  @click="startEdit()"
+                  class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  Editar Informações
+                </button>
+
+                <!-- Modo edição -->
+                <template x-if="editMode">
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="cancelEdit()"
+                      class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      @click="saveEdit()"
+                      class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Salvar Alterações
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Banner de edição -->
+            <div
+              x-show="editMode"
+              class="mb-4 flex items-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-700 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-300"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              Modo de edição ativo — clique em Salvar Alterações para confirmar ou Cancelar para descartar.
+            </div>
+
+            <section class="grid gap-6 lg:grid-cols-3">
+              <!-- Logo e Info Principal -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 lg:col-span-1 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <div class="flex flex-col items-center text-center">
+                  <div
+                    class="bg-brand-100 dark:bg-brand-500/20 flex h-24 w-24 items-center justify-center rounded-2xl"
+                  >
+                    <svg
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      class="text-brand-600 dark:text-brand-300"
+                    >
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  </div>
+
+                  <!-- Nome Fantasia -->
+                  <div class="mt-4 w-full">
+                    <p x-show="!editMode" class="text-xl font-bold text-gray-900 dark:text-white" x-text="empresa.nome_fantasia"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.nome_fantasia"
+                      class="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-center text-lg font-bold text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <!-- Setor (resumo) -->
+                  <div class="mt-1 w-full">
+                    <p x-show="!editMode" class="text-sm text-gray-600 dark:text-gray-400" x-text="empresa.setor"></p>
+                  </div>
+
+                  <!-- CNPJ -->
+                  <div
+                    class="mt-4 flex w-full flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700"
+                  >
+                    <div class="text-xs text-gray-500 dark:text-gray-400">CNPJ</div>
+                    <p
+                      x-show="!editMode"
+                      class="font-mono text-sm font-semibold text-gray-900 dark:text-white"
+                      x-text="empresa.cnpj"
+                    ></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.cnpj"
+                      placeholder="00.000.000/0000-00"
+                      class="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-center font-mono text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Informações Gerais -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 lg:col-span-2 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Informações Gerais</h3>
+                <div class="grid gap-4 md:grid-cols-2">
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Razão Social</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.razao_social"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.razao_social"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Nome Fantasia</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.nome_fantasia"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.nome_fantasia"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Setor</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.setor"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.setor"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Data de Fundação</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.data_fundacao"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.data_fundacao"
+                      placeholder="Ex: 10 de maio de 2006"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div class="md:col-span-2">
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Descrição</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.descricao"></p>
+                    <textarea
+                      x-show="editMode"
+                      x-model="empresa.descricao"
+                      rows="3"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-6 lg:grid-cols-2">
+              <!-- Contato e Localização -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Contato e Localização</h3>
+                <div class="space-y-4">
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Endereço</label>
+                    <template x-if="!editMode">
+                      <div>
+                        <p class="mt-1 text-gray-900 dark:text-white" x-text="empresa.endereco"></p>
+                        <p class="text-gray-600 dark:text-gray-400" x-text="empresa.cidade_uf_cep"></p>
+                      </div>
+                    </template>
+                    <template x-if="editMode">
+                      <div class="mt-1 space-y-1.5">
+                        <input
+                          type="text"
+                          x-model="empresa.endereco"
+                          placeholder="Rua, número"
+                          class="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        />
+                        <input
+                          type="text"
+                          x-model="empresa.cidade_uf_cep"
+                          placeholder="Bairro, Cidade - UF, CEP"
+                          class="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        />
+                      </div>
+                    </template>
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Telefone Principal</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.telefone"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.telefone"
+                      placeholder="(00) 0000-0000"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Email</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.email"></p>
+                    <input
+                      x-show="editMode"
+                      type="email"
+                      x-model="empresa.email"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Website</label>
+                    <p x-show="!editMode" class="text-brand-600 dark:text-brand-400 mt-1" x-text="empresa.website"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.website"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Informações Comerciais -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Informações Comerciais</h3>
+                <div class="space-y-3">
+
+                  <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-800/50">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Faturamento Anual</span>
+                    <span x-show="!editMode" class="font-bold text-gray-900 dark:text-white" x-text="empresa.faturamento_anual"></span>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.faturamento_anual"
+                      class="w-32 rounded-lg border border-gray-200 bg-white px-2 py-1 text-right text-sm font-bold text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-800/50">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Funcionários</span>
+                    <span x-show="!editMode" class="font-bold text-gray-900 dark:text-white" x-text="empresa.funcionarios"></span>
+                    <input
+                      x-show="editMode"
+                      type="number"
+                      x-model.number="empresa.funcionarios"
+                      min="0"
+                      class="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-right text-sm font-bold text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-800/50">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Clientes Ativos</span>
+                    <span x-show="!editMode" class="font-bold text-gray-900 dark:text-white" x-text="empresa.clientes_ativos"></span>
+                    <input
+                      x-show="editMode"
+                      type="number"
+                      x-model.number="empresa.clientes_ativos"
+                      min="0"
+                      class="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-right text-sm font-bold text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-gray-800/50">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Filiais</span>
+                    <span x-show="!editMode" class="font-bold text-gray-900 dark:text-white" x-text="empresa.filiais"></span>
+                    <input
+                      x-show="editMode"
+                      type="number"
+                      x-model.number="empresa.filiais"
+                      min="0"
+                      class="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-right text-sm font-bold text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-6 lg:grid-cols-2">
+              <!-- Dados Administrativos -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Dados Administrativos</h3>
+                <div class="space-y-4">
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Proprietário / Presidente</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.proprietario"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.proprietario"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Responsável Técnico</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.responsavel_tecnico"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.responsavel_tecnico"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Gerente Financeiro</label>
+                    <p x-show="!editMode" class="mt-1 text-gray-900 dark:text-white" x-text="empresa.gerente_financeiro"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.gerente_financeiro"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Inscrição Estadual</label>
+                    <p x-show="!editMode" class="mt-1 font-mono text-sm text-gray-900 dark:text-white" x-text="empresa.inscricao_estadual"></p>
+                    <input
+                      x-show="editMode"
+                      type="text"
+                      x-model="empresa.inscricao_estadual"
+                      placeholder="000.000.000.000"
+                      class="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 font-mono text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Certificações -->
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]"
+                :class="editMode ? 'ring-2 ring-brand-200 dark:ring-brand-500/30' : ''"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Certificações</h3>
+                  <button
+                    x-show="editMode"
+                    @click="addCertificacao()"
+                    class="flex items-center gap-1 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Adicionar
+                  </button>
+                </div>
+
+                <div class="space-y-2">
+                  <template x-for="(cert, idx) in empresa.certificacoes" :key="idx">
+                    <div>
+                      <!-- View mode -->
+                      <div
+                        x-show="!editMode"
+                        class="flex items-center gap-2 rounded-lg bg-green-50 p-3 dark:bg-green-500/10"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0 text-green-600 dark:text-green-400">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white" x-text="cert"></span>
+                      </div>
+
+                      <!-- Edit mode -->
+                      <div x-show="editMode" class="flex items-center gap-2">
+                        <input
+                          type="text"
+                          x-model="empresa.certificacoes[idx]"
+                          placeholder="Nome da certificação"
+                          class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        />
+                        <button
+                          @click="removeCertificacao(idx)"
+                          class="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10"
+                          title="Remover"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4h6v2"></path></svg>
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+
+                  <p
+                    x-show="empresa.certificacoes.length === 0"
+                    class="text-sm text-gray-400 dark:text-gray-500"
+                  >
+                    Nenhuma certificação cadastrada.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

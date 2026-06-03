@@ -1,0 +1,849 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Dashboard Estoque | Dashboard Multidominio</title>
+  </head>
+  <body
+    x-data="{
+      ...createAppShell('estoque'),
+      selectedProducts: [],
+      showComparison: false,
+      produtoPorPagina: 10,
+      produtoBusca: '',
+      produtoFiltroStatus: '',
+
+      paginaAtual() { return this.dashboardData.produtosPage || 1; },
+      totalPaginas() { return Math.ceil((this.dashboardData.produtosTotal || 0) / this.produtoPorPagina); },
+      paginasVisiveis() {
+        const total = this.totalPaginas();
+        const curr  = this.paginaAtual();
+        const pages = [];
+        for (let i = Math.max(1, curr - 2); i <= Math.min(total, curr + 2); i++) pages.push(i);
+        return pages;
+      },
+      async carregarProdutos(pagina) {
+        await this.fetchProdutos(pagina, this.produtoPorPagina, this.produtoBusca, this.produtoFiltroStatus);
+      },
+      async proximaPagina() {
+        if (this.paginaAtual() < this.totalPaginas()) await this.carregarProdutos(this.paginaAtual() + 1);
+      },
+      async paginaAnterior() {
+        if (this.paginaAtual() > 1) await this.carregarProdutos(this.paginaAtual() - 1);
+      },
+
+      toggleAllProducts() {
+        const allIds = (this.dashboardData.produtos || []).map(p => p.id);
+        this.selectedProducts.length === allIds.length ? this.selectedProducts = [] : this.selectedProducts = allIds;
+      },
+      toggleProduct(id) {
+        this.selectedProducts.includes(id) ? this.selectedProducts = this.selectedProducts.filter(p => p !== id) : this.selectedProducts.push(id);
+      },
+      compareProducts() {
+        this.showComparison = !this.showComparison;
+      },
+
+      showAddModal: false,
+      newProduct: { nome: '', sku: '', categoria: '', quantidade: null, qty_minima: 10, preco_unitario: null },
+      calcStatus(qty, minQty) {
+        if (qty <= minQty) return 'Crítico';
+        if (qty <= minQty * 2) return 'Baixo';
+        return 'OK';
+      },
+      addProduct() {
+        const p = {
+          ...this.newProduct,
+          id: Date.now(),
+          status: this.calcStatus(this.newProduct.quantidade || 0, this.newProduct.qty_minima || 10),
+        };
+        if (!this.dashboardData.produtos) this.dashboardData.produtos = [];
+        this.dashboardData.produtos.unshift(p);
+        this.dashboardData.produtosTotal = (this.dashboardData.produtosTotal || 0) + 1;
+        this.newProduct = { nome: '', sku: '', categoria: '', quantidade: null, qty_minima: 10, preco_unitario: null };
+        this.showAddModal = false;
+      },
+      toggleIndisponivel(product) {
+        if (product.status === 'Indisponível') {
+          product.status = this.calcStatus(product.quantidade || 0, product.qty_minima || 10);
+        } else {
+          product._statusAntes = product.status;
+          product.status = 'Indisponível';
+        }
+      },
+    }"
+    x-init="init()"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <include src="./partials/preloader.html"></include>
+
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <include src="./partials/dashboard/page-header.html"></include>
+            <include src="./partials/dashboard/export-buttons.html"></include>
+
+            <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Valor em Estoque</span
+                  >
+                  <span
+                    class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                      ></path>
+                      <polyline
+                        points="3.27 6.96 12 12.01 20.73 6.96"
+                      ></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="dashboardData.kpis.valor_estoque?.formatado || 'R$ 0,00'"
+                    ></h4>
+                    <span
+                      class="mt-1 flex items-center gap-1 text-sm text-gray-500"
+                      >Em 12.500 itens</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Giro de Estoque</span
+                  >
+                  <span
+                    class="bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <polyline points="23 4 23 10 17 10"></polyline>
+                      <polyline points="1 20 1 14 7 14"></polyline>
+                      <path
+                        d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                      ></path>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="dashboardData.kpis.giro_estoque?.formatado || '0,0x'"
+                    ></h4>
+                    <span
+                      class="text-success-500 mt-1 flex items-center gap-1 text-sm"
+                      x-text="dashboardData.kpis.giro_estoque?.status || 'Acima da média'"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Risco de Ruptura</span
+                  >
+                  <span
+                    class="bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                      ></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="dashboardData.kpis.risco_ruptura?.formatado || '0 itens'"
+                    ></h4>
+                    <span
+                      class="text-error-500 mt-1 flex items-center gap-1 text-sm text-red-500"
+                      x-text="dashboardData.kpis.risco_ruptura?.status || 'Baixo estoque'"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Prazo de Reposição</span
+                  >
+                  <span
+                    class="bg-warning-50 text-warning-600 dark:bg-warning-500/15 dark:text-warning-300 flex h-8 w-8 items-center justify-center rounded-full"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <h4
+                      class="text-2xl font-bold text-gray-800 dark:text-white/90"
+                      x-text="dashboardData.kpis.prazo_medio_reposicao?.formatado || '0 dias'"
+                    ></h4>
+                    <span
+                      class="text-warning-500 mt-1 flex items-center gap-1 text-sm"
+                      x-text="dashboardData.kpis.prazo_medio_reposicao?.status || 'Atraso em 3 ped.'"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6 grid gap-4 xl:grid-cols-3">
+              <div
+                class="xl:col-span-2 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Movimentação de Estoque</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Entradas e saídas mensais (unidades)</p>
+                  </div>
+                  <span class="inline-flex items-center rounded-full bg-warning-50 px-2.5 py-1 text-xs font-medium text-warning-700 dark:bg-warning-500/15 dark:text-warning-300">
+                    Giro 4.5x
+                  </span>
+                </div>
+                <div class="w-full">
+                  <div id="stockMovementChart" class="w-full"></div>
+                </div>
+              </div>
+
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div class="mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Curva ABC</h3>
+                    <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Distribuição por valor de estoque</p>
+                  </div>
+                </div>
+                <div class="w-full">
+                  <div id="stockAbcChart"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mt-6">
+              <div
+                class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <div
+                  class="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-gray-900 dark:text-white"
+                    >
+                      Lista de Produtos
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      Controle de inventário e disponibilidade
+                    </p>
+                  </div>
+                  <button
+                    @click="showAddModal = true"
+                    class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Adicionar Produto
+                  </button>
+                </div>
+
+                <!-- Legenda de Status -->
+                <div class="mb-4 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800/50">
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Status por Quantidade</p>
+                  <div class="flex flex-wrap gap-4 text-xs">
+                    <div class="flex items-center gap-2">
+                      <span class="bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300 inline-block rounded-full px-2 py-0.5 font-medium">OK</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade acima de 2× o mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300 inline-block rounded-full px-2 py-0.5 font-medium">Baixo</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade entre 1× e 2× o mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300 inline-block rounded-full px-2 py-0.5 font-medium">Crítico</span>
+                      <span class="text-gray-600 dark:text-gray-400">Quantidade igual ou abaixo do mínimo</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block rounded-full bg-gray-200 px-2 py-0.5 font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">Indisponível</span>
+                      <span class="text-gray-600 dark:text-gray-400">Definido manualmente — sem relação com quantidade</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="mb-4 flex flex-col gap-3 md:flex-row md:items-center"
+                >
+                  <input
+                    type="text"
+                    placeholder="Buscar produto, SKU ou categoria..."
+                    x-model="produtoBusca"
+                    class="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @input.debounce.350ms="carregarProdutos(1)"
+                  />
+                  <select
+                    x-model="produtoFiltroStatus"
+                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @change="carregarProdutos(1)"
+                  >
+                    <option value="">Todos os Status</option>
+                    <option value="OK">OK</option>
+                    <option value="Baixo">Baixo</option>
+                    <option value="Crítico">Crítico</option>
+                    <option value="Indisponível">Indisponível</option>
+                  </select>
+                  <select
+                    x-model.number="produtoPorPagina"
+                    class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    @change="carregarProdutos(1)"
+                  >
+                    <option value="10">10 por página</option>
+                    <option value="25">25 por página</option>
+                    <option value="50">50 por página</option>
+                  </select>
+                </div>
+
+                <div
+                  class="mb-4 flex items-center gap-2"
+                  x-show="selectedProducts.length > 0"
+                >
+                  <button
+                    @click="compareProducts"
+                    class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+                  >
+                    <span
+                      x-text="showComparison ? 'Fechar Comparação' : 'Comparar Produtos'"
+                    ></span>
+                    <span
+                      class="font-bold"
+                      x-text="'(' + selectedProducts.length + ')'"
+                    ></span>
+                  </button>
+                  <button
+                    @click="selectedProducts = []; showComparison = false"
+                    class="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                  >
+                    Limpar Seleção
+                  </button>
+                </div>
+
+                <div class="w-full">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th
+                          class="w-12 px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          <input
+                            type="checkbox"
+                            class="text-brand-600 h-4 w-4 rounded border-gray-300"
+                            @change="toggleAllProducts"
+                            :checked="selectedProducts.length > 0 && selectedProducts.length === (dashboardData.produtos || []).length"
+                          />
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Produto
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          SKU
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Categoria
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Quantidade
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          V. Unitário
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          V. Total
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Status
+                        </th>
+                        <th
+                          class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300"
+                        >
+                          Ações
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template
+                        x-for="(product, index) in dashboardData.produtos || []"
+                        :key="product.id"
+                      >
+                        <tr
+                          class="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/50"
+                        >
+                          <td class="w-12 px-4 py-3 text-center">
+                            <input
+                              type="checkbox"
+                              class="text-brand-600 h-4 w-4 rounded border-gray-300"
+                              @change="toggleProduct(product.id)"
+                              :checked="selectedProducts.includes(product.id)"
+                            />
+                          </td>
+                          <td
+                            class="px-4 py-3 font-medium text-gray-800 dark:text-gray-200"
+                            x-text="product.nome"
+                          ></td>
+                          <td
+                            class="px-4 py-3 font-mono text-xs text-gray-600 dark:text-gray-400"
+                            x-text="product.sku"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-600 dark:text-gray-400"
+                            x-text="product.categoria"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-800 dark:text-gray-200"
+                            x-text="product.quantidade"
+                          ></td>
+                          <td
+                            class="px-4 py-3 text-gray-600 dark:text-gray-400"
+                            x-text="'R$ ' + formatNumber(product.preco_unitario, 2)"
+                          ></td>
+                          <td
+                            class="px-4 py-3 font-semibold text-gray-800 dark:text-gray-200"
+                            x-text="'R$ ' + formatNumber(product.quantidade * product.preco_unitario, 2)"
+                          ></td>
+                          <td class="px-4 py-3">
+                            <span
+                              class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium"
+                              :class="{
+                                'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300': product.status === 'OK',
+                                'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300': product.status === 'Baixo',
+                                'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300': product.status === 'Crítico',
+                                'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300': product.status === 'Indisponível'
+                              }"
+                              x-text="product.status"
+                            ></span>
+                          </td>
+                          <td class="px-4 py-3">
+                            <button
+                              @click="toggleIndisponivel(product)"
+                              class="rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors"
+                              :class="product.status === 'Indisponível'
+                                ? 'border-success-300 bg-success-50 text-success-700 hover:bg-success-100 dark:border-success-700 dark:bg-success-500/10 dark:text-success-300'
+                                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'"
+                              :title="product.status === 'Indisponível' ? 'Reativar produto' : 'Marcar como indisponível'"
+                              x-text="product.status === 'Indisponível' ? 'Reativar' : 'Indisponível'"
+                            ></button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="mt-4 flex flex-col gap-3 border-t border-gray-200 pt-4 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <!-- Contador -->
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Mostrando
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="(paginaAtual() - 1) * produtoPorPagina + 1"></span>
+                    –
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="Math.min(paginaAtual() * produtoPorPagina, dashboardData.produtosTotal || 0)"></span>
+                    de
+                    <span class="font-semibold text-gray-800 dark:text-gray-200"
+                      x-text="dashboardData.produtosTotal || 0"></span>
+                    produtos
+                  </p>
+
+                  <!-- Controles -->
+                  <div class="flex items-center gap-1">
+                    <!-- Anterior -->
+                    <button
+                      @click="paginaAnterior()"
+                      :disabled="paginaAtual() <= 1"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    >
+                      ←
+                    </button>
+
+                    <!-- Primeira página (se fora da janela) -->
+                    <template x-if="paginasVisiveis()[0] > 1">
+                      <button
+                        @click="carregarProdutos(1)"
+                        class="min-w-[2.25rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                      >1</button>
+                    </template>
+                    <template x-if="paginasVisiveis()[0] > 2">
+                      <span class="select-none px-1 text-gray-400">…</span>
+                    </template>
+
+                    <!-- Janela de páginas -->
+                    <template x-for="p in paginasVisiveis()" :key="p">
+                      <button
+                        @click="carregarProdutos(p)"
+                        :class="p === paginaAtual()
+                          ? 'bg-brand-600 text-white dark:bg-brand-500 border-brand-600 dark:border-brand-500'
+                          : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700'"
+                        class="min-w-[2.25rem] rounded-lg border px-2 py-2 text-sm font-medium transition-colors"
+                        x-text="p"
+                      ></button>
+                    </template>
+
+                    <!-- Última página (se fora da janela) -->
+                    <template x-if="totalPaginas() > 0 && paginasVisiveis()[paginasVisiveis().length - 1] < totalPaginas() - 1">
+                      <span class="select-none px-1 text-gray-400">…</span>
+                    </template>
+                    <template x-if="totalPaginas() > 0 && paginasVisiveis()[paginasVisiveis().length - 1] < totalPaginas()">
+                      <button
+                        @click="carregarProdutos(totalPaginas())"
+                        class="min-w-[2.25rem] rounded-lg border border-gray-200 px-2 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                        x-text="totalPaginas()"
+                      ></button>
+                    </template>
+
+                    <!-- Próximo -->
+                    <button
+                      @click="proximaPagina()"
+                      :disabled="paginaAtual() >= totalPaginas()"
+                      class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Comparação de Produtos -->
+              <div
+                x-show="showComparison && selectedProducts.length > 0"
+                class="mt-8 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+              >
+                <h3
+                  class="mb-4 text-lg font-semibold text-gray-900 dark:text-white"
+                >
+                  Comparação:
+                  <span x-text="selectedProducts.length"></span> Produto(s)
+                </h3>
+
+                <div class="overflow-x-auto">
+                  <div
+                    class="grid gap-4"
+                    :class="selectedProducts.length === 1 ? 'grid-cols-1' : selectedProducts.length === 2 ? 'grid-cols-2' : 'grid-cols-3 xl:grid-cols-4'"
+                  >
+                    <template
+                      x-for="productId in selectedProducts"
+                      :key="productId"
+                    >
+                      <div
+                        class="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800"
+                      >
+                        <template x-if="dashboardData.produtos">
+                          <template
+                            x-for="product in dashboardData.produtos.filter(p => p.id === productId)"
+                            :key="product.id"
+                          >
+                            <div>
+                              <h4
+                                class="mb-2 font-bold text-gray-900 dark:text-white"
+                                x-text="product.nome"
+                              ></h4>
+
+                              <div class="space-y-2 text-sm">
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    SKU
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                    x-text="product.sku"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Categoria
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                    x-text="product.categoria"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Quantidade
+                                  </p>
+                                  <p
+                                    class="text-lg font-bold text-gray-900 dark:text-white"
+                                    x-text="product.quantidade"
+                                  ></p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Preço Unit.
+                                  </p>
+                                  <p
+                                    class="font-medium text-gray-900 dark:text-white"
+                                  >
+                                    R$
+                                    <span
+                                      x-text="formatNumber(product.preco_unitario, 2)"
+                                    ></span>
+                                  </p>
+                                </div>
+                                <div
+                                  class="border-t border-gray-200 pt-2 dark:border-gray-700"
+                                >
+                                  <p class="text-gray-600 dark:text-gray-400">
+                                    Valor Total
+                                  </p>
+                                  <p
+                                    class="text-brand-600 dark:text-brand-400 text-lg font-bold"
+                                  >
+                                    R$
+                                    <span
+                                      x-text="formatNumber(product.quantidade * product.preco_unitario, 2)"
+                                    ></span>
+                                  </p>
+                                </div>
+                                <div>
+                                  <span
+                                    :class="product.status === 'OK' ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300' : product.status === 'Baixo' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-300' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300'"
+                                    class="inline-block rounded-full px-2 py-1 text-xs font-medium"
+                                    x-text="product.status"
+                                  ></span>
+                                </div>
+                              </div>
+                            </div>
+                          </template>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+    <!-- Modal: Adicionar Produto -->
+    <div
+      x-show="showAddModal"
+      x-transition.opacity
+      class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      @keydown.escape.window="showAddModal = false"
+    >
+      <div
+        x-show="showAddModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-900"
+        @click.stop
+      >
+        <div class="mb-5 flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Adicionar Produto ao Estoque</h3>
+          <button
+            @click="showAddModal = false"
+            class="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="addProduct()" class="space-y-4">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Produto <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                x-model="newProduct.nome"
+                required
+                placeholder="Ex: Camiseta Básica P"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">SKU <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                x-model="newProduct.sku"
+                required
+                placeholder="Ex: CAM-BAS-P-001"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Categoria</label>
+              <input
+                type="text"
+                x-model="newProduct.categoria"
+                placeholder="Ex: Vestuário"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Quantidade em Estoque <span class="text-red-500">*</span></label>
+              <input
+                type="number"
+                x-model.number="newProduct.quantidade"
+                required
+                min="0"
+                placeholder="0"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Quantidade Mínima
+                <span class="text-xs font-normal text-gray-400">(define o status)</span>
+              </label>
+              <input
+                type="number"
+                x-model.number="newProduct.qty_minima"
+                min="0"
+                placeholder="10"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Preço Unitário (R$)</label>
+              <input
+                type="number"
+                x-model.number="newProduct.preco_unitario"
+                min="0"
+                step="0.01"
+                placeholder="0,00"
+                class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <!-- Preview do status calculado -->
+          <div class="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              Status calculado:
+              <span
+                class="ml-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                :class="{
+                  'bg-success-100 text-success-700 dark:bg-success-500/20 dark:text-success-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'OK',
+                  'bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'Baixo',
+                  'bg-error-100 text-error-700 dark:bg-error-500/20 dark:text-error-300': calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10) === 'Crítico'
+                }"
+                x-text="calcStatus(newProduct.quantidade || 0, newProduct.qty_minima || 10)"
+              ></span>
+            </p>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-1">
+            <button
+              type="button"
+              @click="showAddModal = false"
+              class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-600 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+            >
+              Adicionar Produto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

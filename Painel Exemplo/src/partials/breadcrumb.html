@@ -1,56 +1,46 @@
-<nav>
-  <ol class="flex flex-wrap items-center gap-1.5 text-sm">
+<nav aria-label="Breadcrumb">
+  <ol class="flex flex-wrap items-center gap-1 text-sm">
+
+    <!-- Home -->
     <li>
-      <a
-        class="inline-flex items-center gap-1.5 text-gray-500 dark:text-gray-400"
-        href="index.html"
-      >
+      <a href="index.html"
+        class="inline-flex items-center gap-1 text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
         Panorama
       </a>
     </li>
+
+    <!-- Separator + Group (if any) -->
     <template x-if="$store.navigation.getPageMeta(page).groupLabel">
-      <li
-        class="inline-flex items-center gap-1.5 text-gray-500 dark:text-gray-400"
-      >
-        <svg
-          class="stroke-current"
-          width="17"
-          height="16"
-          viewBox="0 0 17 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
-            stroke=""
-            stroke-width="1.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+      <li class="flex items-center gap-1">
+        <svg class="text-gray-300 dark:text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
-        <span x-text="$store.navigation.getPageMeta(page).groupLabel"></span>
+        <span class="text-gray-400 dark:text-gray-500"
+          x-text="$store.navigation.getPageMeta(page).groupLabel"></span>
       </li>
     </template>
-    <li
-      class="inline-flex items-center gap-1.5 text-gray-800 dark:text-white/90"
-    >
-      <svg
-        class="stroke-current text-gray-500 dark:text-gray-400"
-        width="17"
-        height="16"
-        viewBox="0 0 17 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366"
-          stroke=""
-          stroke-width="1.2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
+
+    <!-- Separator + Current page -->
+    <li class="flex items-center gap-1">
+      <svg class="text-gray-300 dark:text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
       </svg>
-      <span x-text="$store.navigation.getPageMeta(page).navLabel"></span>
+      <span class="font-medium text-gray-700 dark:text-white/80"
+        x-text="$store.navigation.getPageMeta(page).navLabel"></span>
     </li>
+
+    <!-- Level badge -->
+    <template x-if="$store.navigation.getPageMeta(page).levelLabel">
+      <li class="ml-1">
+        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+          :class="$store.navigation.getPageMeta(page).badgeClass"
+          x-text="$store.navigation.getPageMeta(page).levelLabel"></span>
+      </li>
+    </template>
+
   </ol>
 </nav>
